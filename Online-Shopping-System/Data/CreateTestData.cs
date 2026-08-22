@@ -20,10 +20,10 @@ namespace Online_Shopping_System.Data
 
         public void Run()
         {
-            CreateTestProducts();
-            CreateTestUsers();
-            CreateTestShippingTypes();
             CreateTestUserTypes();
+            CreateTestUsers();
+            CreateTestProducts();
+            CreateTestShippingTypes();
         }
 
         // add products

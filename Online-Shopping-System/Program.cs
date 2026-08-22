@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Online_Shopping_System.Data;
+//using Online_Shopping_System.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient<EmailService>();
 builder.Services.AddScoped<CreateTestData>();
 builder.Services.AddCors(options =>
 {
@@ -26,7 +28,6 @@ builder.Services.AddDbContext<OnlineShoppingContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
     ));
-
 
 var app = builder.Build();
 

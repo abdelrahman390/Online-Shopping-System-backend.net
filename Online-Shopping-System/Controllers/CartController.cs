@@ -31,40 +31,40 @@ namespace Online_Shopping_System.Controllers
         }
 
         [HttpPost("addToCart")]
-        public IActionResult addToCart(int productId, int quntity, int userId)
+        public async Task<IActionResult> addToCart(int productId, int quantity, int userId)
         {
-
             try
             {
-                //var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
-                //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                if (quantity <= 0)
+                {
+                    return BadRequest("Quantity must be greater than 0.");
+                }
 
-                //if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                //var affectedRows = await _dbContext.Products
+                //    .Where(p => p.ProductId == productId && p.Quantity >= quantity)
+                //    .ExecuteUpdateAsync(setters => setters
+                //        .SetProperty(p => p.Quantity, p => p.Quantity - quantity));
+
+                //if (affectedRows == 0)
                 //{
-                //    return Unauthorized("Missing data in the token.");
+                //    // Product doesn't exist OR insufficient quantity
+                //    return BadRequest("Insufficient product quantity.");
                 //}
-
-                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.UserId == userId && c.CartStatus == "Pending");
 
                 Product product = _dbContext.Products.FirstOrDefault(p => p.ProductId == productId);
 
-                CartItem item = _dbContext.CartItems.FirstOrDefault(i => i.ProductId == productId);
+                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.UserId == userId && c.CartStatus == "Pending");
 
                 if (product == null)
                 {
                     return NotFound("Product not found.");
                 }
 
-                if (quntity <= 0)
-                {
-                    return BadRequest("Quantity must be greater than 0.");
-                }
-
-                if (quntity > product.Quantity)
+                if (quantity >= product.Quantity)
                 {
                     return BadRequest("Not enough products in stock.");
                 }
+                product.Quantity -= quantity;
 
                 if (cart == null)
                 {
@@ -80,35 +80,33 @@ namespace Online_Shopping_System.Controllers
                     _dbContext.SaveChanges();
                 }
 
+                CartItem item = _dbContext.CartItems.FirstOrDefault(i => i.ProductId == productId && i.CartId == cart.CartId);
+
                 if (item == null)
                 {
                     item = new CartItem
                     {
                         CartId = cart.CartId,
-                        ProductId = product.ProductId,
-                        Quantity = quntity,
-                        TotalPrice = product.Price * quntity
+                        ProductId = productId,
+                        Quantity = quantity,
+                        TotalPrice = product.Price * quantity
                     };
                     _dbContext.CartItems.Add(item);
                     _dbContext.SaveChanges();
-                } else
+                }
+                else
                 {
-                    item.Quantity += quntity;
-                    item.TotalPrice += quntity * product.Price;
+                    item.Quantity += quantity;
+                    item.TotalPrice += quantity * product.Price;
                 }
 
-                    product.Quantity -= quntity;
-
-                cart.TotalPrice += item.TotalPrice;
-
-                //_dbContext.CartItem.Add(item);
+                cart.TotalPrice += product.Price * quantity;
 
                 _dbContext.SaveChanges();
 
                 return Ok(
                     $"Product: {product.ProductId} is now added to cart: {cart.CartId} as item: {item.CartItemId}"
                 );
-
             }
             catch (Exception ex)
             {
@@ -119,6 +117,7 @@ namespace Online_Shopping_System.Controllers
                 );
             }
         }
+
 
         [HttpGet("previewCart")]
         public IActionResult previewCart(int userId)
@@ -163,60 +162,6 @@ namespace Online_Shopping_System.Controllers
                 //    item.
                 //}
                 //CartItem item = _dbContext.CartItem.FirstOrDefault(i => i.CartId == cart.UserId);
-
-                //if (product == null)
-                //{
-                //    return NotFound("Product not found.");
-                //}
-
-                //if (quntity <= 0)
-                //{
-                //    return BadRequest("Quantity must be greater than 0.");
-                //}
-
-                //if (quntity > product.Quantity)
-                //{
-                //    return BadRequest("Not enough products in stock.");
-                //}
-
-                //if (cart == null)
-                //{
-                //    cart = new Cart
-                //    {
-                //        UserId = userId,
-                //        TotalPrice = 0,
-                //        CreatedAt = DateTime.UtcNow,
-                //    };
-
-                //    _dbContext.Cart.Add(cart);
-                //    _dbContext.SaveChanges();
-                //}
-
-                //if (item == null)
-                //{
-                //    item = new CartItem
-                //    {
-                //        CartId = cart.CartId,
-                //        ProductId = product.ProductId,
-                //        Quantity = quntity,
-                //        TotalPrice = product.Price * quntity
-                //    };
-                //    _dbContext.CartItem.Add(item);
-                //    _dbContext.SaveChanges();
-                //}
-                //else
-                //{
-                //    item.Quantity += quntity;
-                //    item.TotalPrice += quntity * product.Price;
-                //}
-
-                //product.Quantity -= quntity;
-
-                //cart.TotalPrice += item.TotalPrice;
-
-                //_dbContext.CartItem.Add(item);
-
-                //_dbContext.SaveChanges();
 
                 return Ok(
                     cartItems

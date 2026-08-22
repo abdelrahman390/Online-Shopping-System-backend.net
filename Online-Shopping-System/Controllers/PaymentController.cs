@@ -26,47 +26,19 @@ namespace Online_Shopping_System.Controllers
     public class PaymentController : ControllerBase {
         private readonly IConfiguration _configuration;
         private readonly OnlineShoppingContext _dbContext;
+        private readonly EmailService _emailService;
 
-        public PaymentController(IConfiguration configuration, OnlineShoppingContext dbContext)
+        public PaymentController(IConfiguration configuration, OnlineShoppingContext dbContext, EmailService emailService)
         {
             _configuration = configuration;
             _dbContext = dbContext;
-        }
-
-        [HttpGet("getPaymentTypes")]
-        public IActionResult GetPaymentTypesPayOrder()
-        {
-
-            try
-            {
-                //var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
-                //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
-
-                //if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
-                //{
-                //    return Unauthorized("Missing data in the token.");
-                //}
-
-                //var paymentType = _dbContext.PaymentTypes.ToList();
-
-                return Ok("test");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                return StatusCode(
-                    500,
-                    $"Error: {ex.Message}"
-                );
-            }
+            _emailService = emailService;
         }
 
 
         [HttpPost("cashPay")]
-        public IActionResult cashPay(int userId, int ShippingTypeId)
+        public async Task<IActionResult> CashPay(int userId)
         {
-
             try
             {
                 //var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -78,55 +50,48 @@ namespace Online_Shopping_System.Controllers
                 //    return Unauthorized("Missing data in the token.");
                 //}
 
-                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.UserId == userId && c.CartStatus == "Pending");
+                Order order = _dbContext.Orders.FirstOrDefault(o => o.UserId == userId && o.OrderStatus == "Pending");
 
-                if (cart == null)
+                if (order == null)
+                {
+                    return BadRequest($"Order not found. {userId}");
+                }
+
+                Payment cashpayment = new CashPayment
+                {
+                    PaymentType = "CashPayment",
+                    OrderId = order.OrderId,
+                    Amount = order.TotalCost,
+                    Date = DateTimeOffset.Now
+                };
+
+                if (cashpayment.CollectMoney() == false)
+                {
+                    return BadRequest("Cash Payment data is incorrect.");
+                }
+
+                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.CartId == order.CartId && c.CartStatus == "Pending");
+
+                if(cart == null)
                 {
                     return BadRequest("Cart not found.");
                 }
 
-                ShippingType ShippingType = _dbContext.ShippingTypes.FirstOrDefault(s => s.ShippingTypeId == ShippingTypeId);
-
-                if(ShippingType == null)
-                {
-                    return BadRequest("Shipping Type not found.");
-                }
-
-                Order order = new Order
-                {
-                    CartId = cart.CartId,
-                    UserId = userId,
-                    OrderStatus = "InProgress",
-                    TotalCost = cart.TotalPrice + ShippingType.ShippingCost
-                };
-                _dbContext.Orders.Add(order);
-
+                order.OrderStatus = "Confirmed";
                 cart.CartStatus = "Confirmed";
 
-                _dbContext.SaveChanges();
-
-                Payment payment = new Payment
-                {
-                    OrderId = order.OrderId,
-                    Amount = order.TotalCost,
-                    Date = DateTimeOffset.Now,
-                    PaymentTypeName = "Cash"
-                };
-                _dbContext.Payments.Add(payment);
-
-                ShippingRecords newShippingRecord = new ShippingRecords
-                {
-                    OrderId = order.OrderId,
-                    ShippingTypeId = ShippingType.ShippingTypeId,
-                    ShippingAddress = "Test Address from payment controller"
-                };
-
-                _dbContext.ShippingRecords.Add(newShippingRecord);
+                _dbContext.Payments.Add(cashpayment);
 
                 _dbContext.SaveChanges();
+
+                await _emailService.SendEmailAsync(
+                        "abdelrahmanbo390@gmail.com",
+                        "Order Confirmation.",
+                        "Hello from Online-Shopping-System, your order has benn confirmed."
+                    );
 
                 return Ok(
-                    $"OrderId: {order.OrderId} is now Confirmed; CartId: {cart.CartId}, with ShippingRecordId: {newShippingRecord} is now added."
+                    $"OrderId: {order.OrderId} is now Paid and confirmed."
                 );
             }
             catch (Exception ex)
@@ -140,7 +105,7 @@ namespace Online_Shopping_System.Controllers
         }
 
         [HttpPost("creditCardPay")]
-        public IActionResult CreditCardPay(int userId, int ShippingTypeId, string cardNumber)
+        public IActionResult CreditCardPay(int userId, string cardNumber)
         {
 
             try
@@ -154,23 +119,17 @@ namespace Online_Shopping_System.Controllers
                 //    return Unauthorized("Missing data in the token.");
                 //}
 
-                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.UserId == userId && c.CartStatus == "Pending");
+                Order order = _dbContext.Orders.FirstOrDefault(o => o.UserId == userId && o.OrderStatus == "Pending");
 
-                if (cart == null)
+                if (order == null)
                 {
-                    return BadRequest("Cart not found.");
+                    return BadRequest("Order not found.");
                 }
 
-                ShippingType ShippingType = _dbContext.ShippingTypes.FirstOrDefault(s => s.ShippingTypeId == ShippingTypeId);
-
-                if (ShippingType == null)
+                Payment creditCardPayment = new CreditCardPayment
                 {
-                    return BadRequest("Shipping Type not found.");
-                }
-
-                CreditCardPayment creditCardPayment = new CreditCardPayment
-                {
-                    CardNumber = cardNumber
+                    PaymentType = "Visa",
+                    CardNumber = cardNumber,
                 };
 
                 if (creditCardPayment.CollectMoney() == false)
@@ -178,45 +137,18 @@ namespace Online_Shopping_System.Controllers
                     return BadRequest("Credit Card data is incorrect.");
                 }
 
-                Order order = new Order
-                {
-                    CartId = cart.CartId,
-                    UserId = userId,
-                    OrderStatus = "InProgress",
-                    TotalCost = cart.TotalPrice + ShippingType.ShippingCost
-                };
-                _dbContext.Orders.Add(order);
+                creditCardPayment.OrderId = order.OrderId;
+                creditCardPayment.Amount = order.TotalCost;
+                creditCardPayment.Date = DateTimeOffset.Now;
 
-                cart.CartStatus = "Confirmed";
+                order.OrderStatus = "Confirmed";
 
-                _dbContext.SaveChanges();
-
-                Payment payment = new Payment
-                {
-                    OrderId = order.OrderId,
-                    Amount = order.TotalCost,
-                    Date = DateTimeOffset.Now,
-                    PaymentTypeName = "CreditCard"
-                };
-                _dbContext.Payments.Add(payment);
-                _dbContext.SaveChanges();
-
-                creditCardPayment.PaymentId = payment.PaymentId;
-
-                _dbContext.CreditCardPayments.Add(creditCardPayment);
-
-                ShippingRecords newShippingRecord = new ShippingRecords
-                {
-                    OrderId = order.OrderId,
-                    ShippingTypeId = ShippingType.ShippingTypeId,
-                    ShippingAddress = "Test Address from payment controller"
-                };
-                _dbContext.ShippingRecords.Add(newShippingRecord);
+                _dbContext.Payments.Add(creditCardPayment);
 
                 _dbContext.SaveChanges();
 
                 return Ok(
-                    $"OrderId: {order.OrderId} is now Confirmed; CartId: {cart.CartId}, with ShippingRecordId: {newShippingRecord} is now added."
+                    $"OrderId: {order.OrderId} is now Paid and confirmed."
                 );
             }
             catch (Exception ex)
@@ -230,7 +162,7 @@ namespace Online_Shopping_System.Controllers
         }
 
         [HttpPost("WalletPay")]
-        public IActionResult WalletPay(int userId, int ShippingTypeId, string WalletNumber, string WalletName)
+        public IActionResult WalletPay(int userId, string WalletNumber, string WalletProviderName)
         {
 
             try
@@ -244,23 +176,17 @@ namespace Online_Shopping_System.Controllers
                 //    return Unauthorized("Missing data in the token.");
                 //}
 
-                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.UserId == userId && c.CartStatus == "Pending");
+                Order order = _dbContext.Orders.FirstOrDefault(o => o.UserId == userId && o.OrderStatus == "Pending");
 
-                if (cart == null)
+                if (order == null)
                 {
-                    return BadRequest("Cart not found.");
+                    return BadRequest("Order not found.");
                 }
 
-                ShippingType ShippingType = _dbContext.ShippingTypes.FirstOrDefault(s => s.ShippingTypeId == ShippingTypeId);
-
-                if (ShippingType == null)
+                Payment walletPayment = new WalletPayment
                 {
-                    return BadRequest("Shipping Type not found.");
-                }
-
-                WalletPayment walletPayment = new WalletPayment
-                {
-                    WalletName = WalletName,
+                    PaymentType = "WalletPayment",
+                    WalletProviderName = WalletProviderName,
                     WalletNumber = WalletNumber
                 };
 
@@ -269,45 +195,19 @@ namespace Online_Shopping_System.Controllers
                     return BadRequest("Wallet data is incorrect.");
                 }
 
-                Order order = new Order
-                {
-                    CartId = cart.CartId,
-                    UserId = userId,
-                    OrderStatus = "InProgress",
-                    TotalCost = cart.TotalPrice + ShippingType.ShippingCost
-                };
-                _dbContext.Orders.Add(order);
 
-                cart.CartStatus = "Confirmed";
+                order.OrderStatus = "Confirmed";
 
-                _dbContext.SaveChanges();
+                walletPayment.OrderId = order.OrderId;
+                walletPayment.Amount = order.TotalCost;
+                walletPayment.Date = DateTimeOffset.Now;
 
-                Payment payment = new Payment
-                {
-                    OrderId = order.OrderId,
-                    Amount = order.TotalCost,
-                    Date = DateTimeOffset.Now,
-                    PaymentTypeName = "Wallet"
-                };
-                _dbContext.Payments.Add(payment);
-                _dbContext.SaveChanges();
-
-                walletPayment.PaymentId = payment.PaymentId;
-
-                _dbContext.WalletPayments.Add(walletPayment);
-
-                ShippingRecords newShippingRecord = new ShippingRecords
-                {
-                    OrderId = order.OrderId,
-                    ShippingTypeId = ShippingType.ShippingTypeId,
-                    ShippingAddress = "Test Address from payment controller"
-                };
-                _dbContext.ShippingRecords.Add(newShippingRecord);
+                _dbContext.Payments.Add(walletPayment);
 
                 _dbContext.SaveChanges();
 
                 return Ok(
-                    $"OrderId: {order.OrderId} is now Confirmed; CartId: {cart.CartId}, with ShippingRecordId: {newShippingRecord} is now added."
+                    $"OrderId: {order.OrderId} is now Paid and confirmed."
                 );
             }
             catch (Exception ex)

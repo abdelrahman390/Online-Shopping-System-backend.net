@@ -12,7 +12,7 @@ using Online_Shopping_System.Data;
 namespace Online_Shopping_System.Migrations
 {
     [DbContext(typeof(OnlineShoppingContext))]
-    [Migration("20260820100852_InitialCreate")]
+    [Migration("20260822225700_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -40,8 +40,8 @@ namespace Online_Shopping_System.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<double>("TotalPrice")
-                        .HasColumnType("float");
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -71,8 +71,8 @@ namespace Online_Shopping_System.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<double>("TotalPrice")
-                        .HasColumnType("float");
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("CartItemId");
 
@@ -98,8 +98,12 @@ namespace Online_Shopping_System.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("TotalCost")
-                        .HasColumnType("float");
+                    b.Property<string>("PaymentTypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalCost")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -122,8 +126,8 @@ namespace Online_Shopping_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentId"));
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTimeOffset?>("Date")
                         .HasColumnType("datetimeoffset");
@@ -131,7 +135,11 @@ namespace Online_Shopping_System.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PaymentTypeName")
+                    b.Property<string>("PaymentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TransactionId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -156,8 +164,8 @@ namespace Online_Shopping_System.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -213,8 +221,8 @@ namespace Online_Shopping_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShippingTypeId"));
 
-                    b.Property<double>("ShippingCost")
-                        .HasColumnType("float");
+                    b.Property<decimal>("ShippingCost")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ShippingDuration")
                         .HasColumnType("int");
@@ -300,11 +308,11 @@ namespace Online_Shopping_System.Migrations
                 {
                     b.HasBaseType("Online_Shopping_System.Models.Payment.Payment");
 
-                    b.Property<string>("WalletName")
+                    b.Property<string>("WalletNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("WalletNumber")
+                    b.Property<string>("WalletProviderName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

@@ -9,7 +9,7 @@ namespace Online_Shopping_System.Models.Carts
         public int ProductId { get; set; }
         public int CartId { get; set; }
         public int Quantity { get; set; }
-        public double TotalPrice { get; set; }
+        public decimal TotalPrice { get; set; }
 
         // Navigation property
         public Product Product { get; set; }

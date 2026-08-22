@@ -11,5 +11,10 @@ namespace Online_Shopping_System.Models.Users
 
         // One UserType has many Users
         public ICollection<User> Users { get; set; } = new List<User>();
+
+        public decimal CalculatTotalPriceAfterDiscount(decimal totalPrice)
+        {
+            return totalPrice - (totalPrice * (decimal)(Discount / 100.0));
+        }
     }
 }

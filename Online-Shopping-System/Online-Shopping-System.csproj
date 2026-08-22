@@ -1,11 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Online_Shopping_System</RootNamespace>
+    <UserSecretsId>7d888f89-b577-4ddb-a527-8d63d6297ecd</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Commands\To-Do.txt" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.19" />

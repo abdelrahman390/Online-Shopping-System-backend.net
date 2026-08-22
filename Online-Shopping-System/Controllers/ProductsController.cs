@@ -29,6 +29,7 @@ namespace Online_Shopping_System.Controllers
             _dbContext = dbContext;
         }
 
+
         [HttpGet("getProducts")]
         public IActionResult getProducts()
         {
@@ -62,5 +63,6 @@ namespace Online_Shopping_System.Controllers
                 );
             }
         }
+
     }
 }

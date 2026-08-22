@@ -3,7 +3,6 @@
     public class CreditCardPayment : Payment
     {
         public string CardNumber { get; set; }
-        //public int PaymentTypeId { get; set; }
 
         public override bool CollectMoney()
         {

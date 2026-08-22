@@ -7,8 +7,9 @@ namespace Online_Shopping_System.Models.Payment
     {
         public int PaymentId { get; set; }
         public int OrderId { get; set; }
-        public float Amount { get; set; }
+        public decimal Amount { get; set; }
         public string TransactionId { get; set; }
+        public string PaymentType { get; set; }
         public DateTimeOffset? Date { get; set; }
 
         // PaymentTypeNames: Cash - CreditCard - Wallet

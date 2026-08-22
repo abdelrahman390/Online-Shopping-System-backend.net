@@ -1,0 +1,88 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Online_Shopping_System.Data;
+using Online_Shopping_System.Models.Carts;
+using Online_Shopping_System.Models.Orders;
+using Online_Shopping_System.Models.Shipping;
+
+namespace Online_Shopping_System.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class OrderController : ControllerBase
+    {
+        private readonly IConfiguration _configuration;
+        private readonly OnlineShoppingContext _dbContext;
+
+        public OrderController(IConfiguration configuration, OnlineShoppingContext dbContext)
+        {
+            _configuration = configuration;
+            _dbContext = dbContext;
+        }
+
+
+        [HttpPost("confirmOrder")]
+        public IActionResult ConfirmOrder(int userId, int shippingTypeId)
+        {
+
+            try
+            {
+                //var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+                //if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                //{
+                //    return Unauthorized("Missing data in the token.");
+                //}
+
+                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.UserId == userId && c.CartStatus == "Pending");
+
+                if (cart == null)
+                {
+                    return BadRequest($"Cart not found. {userId} - {shippingTypeId}");
+                }
+
+
+                ShippingType ShippingType = _dbContext.ShippingTypes.FirstOrDefault(s => s.ShippingTypeId == shippingTypeId);
+
+                if (ShippingType == null)
+                {
+                    return BadRequest("Shipping Type not found.");
+                }
+
+
+                Order order = new Order
+                {
+                    CartId = cart.CartId,
+                    UserId = userId,
+                    OrderStatus = "Pending",
+                    TotalCost = cart.TotalPrice + ShippingType.ShippingCost
+                };
+                _dbContext.Orders.Add(order);
+                _dbContext.SaveChanges();
+
+                ShippingRecords newShippingRecord = new ShippingRecords
+                {
+                    OrderId = order.OrderId,
+                    ShippingTypeId = ShippingType.ShippingTypeId,
+                    ShippingAddress = "Test Address from payment controller"
+                };
+
+                _dbContext.ShippingRecords.Add(newShippingRecord);
+                _dbContext.SaveChanges();
+
+                return Ok($"Order {order.OrderId} has benn confermed.");
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return StatusCode(
+                    500,
+                    $"Error: {ex.Message}"
+                );
+            }
+        }
+
+    }
+}

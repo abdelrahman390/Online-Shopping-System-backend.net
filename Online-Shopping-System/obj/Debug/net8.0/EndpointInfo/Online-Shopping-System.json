@@ -20,7 +20,7 @@
             }
           },
           {
-            "name": "quntity",
+            "name": "quantity",
             "in": "query",
             "schema": {
               "type": "integer",
@@ -65,10 +65,40 @@
         }
       }
     },
-    "/Payment/getPaymentTypes": {
-      "get": {
+    "/Email/test": {
+      "post": {
         "tags": [
-          "Payment"
+          "Email"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/Order/confirmOrder": {
+      "post": {
+        "tags": [
+          "Order"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "shippingTypeId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -85,14 +115,6 @@
         "parameters": [
           {
             "name": "userId",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "ShippingTypeId",
             "in": "query",
             "schema": {
               "type": "integer",
@@ -115,14 +137,6 @@
         "parameters": [
           {
             "name": "userId",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "ShippingTypeId",
             "in": "query",
             "schema": {
               "type": "integer",
@@ -159,14 +173,6 @@
             }
           },
           {
-            "name": "ShippingTypeId",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
             "name": "WalletNumber",
             "in": "query",
             "schema": {
@@ -174,7 +180,7 @@
             }
           },
           {
-            "name": "WalletName",
+            "name": "WalletProviderName",
             "in": "query",
             "schema": {
               "type": "string"
@@ -211,72 +217,7 @@
           }
         }
       }
-    },
-    "/WeatherForecast": {
-      "get": {
-        "tags": [
-          "WeatherForecast"
-        ],
-        "operationId": "GetWeatherForecast",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/WeatherForecast"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/WeatherForecast"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/WeatherForecast"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
-  "components": {
-    "schemas": {
-      "WeatherForecast": {
-        "type": "object",
-        "properties": {
-          "date": {
-            "type": "string",
-            "format": "date"
-          },
-          "temperatureC": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "temperatureF": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "summary": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      }
-    }
-  }
+  "components": { }
 }

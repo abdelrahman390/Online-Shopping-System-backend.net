@@ -18,7 +18,7 @@ namespace Online_Shopping_System.Migrations
                     ProductId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<double>(type: "float", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -34,7 +34,7 @@ namespace Online_Shopping_System.Migrations
                     ShippingTypeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ShippingName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ShippingCost = table.Column<double>(type: "float", nullable: false),
+                    ShippingCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ShippingDuration = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -141,7 +141,7 @@ namespace Online_Shopping_System.Migrations
                     CartId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    TotalPrice = table.Column<double>(type: "float", nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CartStatus = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -165,7 +165,7 @@ namespace Online_Shopping_System.Migrations
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     CartId = table.Column<int>(type: "int", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    TotalPrice = table.Column<double>(type: "float", nullable: false)
+                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -193,7 +193,8 @@ namespace Online_Shopping_System.Migrations
                     CartId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TotalCost = table.Column<double>(type: "float", nullable: false)
+                    PaymentTypeName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TotalCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -219,9 +220,10 @@ namespace Online_Shopping_System.Migrations
                     PaymentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OrderId = table.Column<int>(type: "int", nullable: false),
-                    Amount = table.Column<double>(type: "float", nullable: false),
-                    Date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    PaymentTypeName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TransactionId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -303,7 +305,7 @@ namespace Online_Shopping_System.Migrations
                 {
                     PaymentId = table.Column<int>(type: "int", nullable: false),
                     WalletNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    WalletName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    WalletProviderName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

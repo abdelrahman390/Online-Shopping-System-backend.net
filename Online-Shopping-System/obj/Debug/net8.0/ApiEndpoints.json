@@ -13,7 +13,7 @@
         "IsRequired": false
       },
       {
-        "Name": "quntity",
+        "Name": "quantity",
         "Type": "System.Int32",
         "IsRequired": false
       },
@@ -42,9 +42,19 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "Online_Shopping_System.Controllers.PaymentController",
-    "Method": "cashPay",
-    "RelativePath": "Payment/cashPay",
+    "ContainingType": "Online_Shopping_System.Controllers.EmailController",
+    "Method": "TestEmail",
+    "RelativePath": "Email/test",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Online_Shopping_System.Controllers.OrderController",
+    "Method": "ConfirmOrder",
+    "RelativePath": "Order/confirmOrder",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -55,7 +65,23 @@
         "IsRequired": false
       },
       {
-        "Name": "ShippingTypeId",
+        "Name": "shippingTypeId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Online_Shopping_System.Controllers.PaymentController",
+    "Method": "CashPay",
+    "RelativePath": "Payment/cashPay",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
         "Type": "System.Int32",
         "IsRequired": false
       }
@@ -76,26 +102,11 @@
         "IsRequired": false
       },
       {
-        "Name": "ShippingTypeId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
         "Name": "cardNumber",
         "Type": "System.String",
         "IsRequired": false
       }
     ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Online_Shopping_System.Controllers.PaymentController",
-    "Method": "GetPaymentTypesPayOrder",
-    "RelativePath": "Payment/getPaymentTypes",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
     "ReturnTypes": []
   },
   {
@@ -112,17 +123,12 @@
         "IsRequired": false
       },
       {
-        "Name": "ShippingTypeId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
         "Name": "WalletNumber",
         "Type": "System.String",
         "IsRequired": false
       },
       {
-        "Name": "WalletName",
+        "Name": "WalletProviderName",
         "Type": "System.String",
         "IsRequired": false
       }
@@ -148,26 +154,5 @@
     "Order": 0,
     "Parameters": [],
     "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Online_Shopping_System.Controllers.WeatherForecastController",
-    "Method": "Get",
-    "RelativePath": "WeatherForecast",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[Online_Shopping_System.WeatherForecast, Online-Shopping-System, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ],
-    "EndpointName": "GetWeatherForecast"
   }
 ]

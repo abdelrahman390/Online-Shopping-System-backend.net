@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System\\Online-Shopping-System\\Online-Shopping-System.csproj": {}
+    "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Online-Shopping-System.csproj": {}
   },
   "projects": {
-    "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System\\Online-Shopping-System\\Online-Shopping-System.csproj": {
+    "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Online-Shopping-System.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System\\Online-Shopping-System\\Online-Shopping-System.csproj",
+        "projectUniqueName": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Online-Shopping-System.csproj",
         "projectName": "Online-Shopping-System",
-        "projectPath": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System\\Online-Shopping-System\\Online-Shopping-System.csproj",
+        "projectPath": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Online-Shopping-System.csproj",
         "packagesPath": "C:\\Users\\hp\\.nuget\\packages\\",
-        "outputPath": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System\\Online-Shopping-System\\obj\\",
+        "outputPath": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

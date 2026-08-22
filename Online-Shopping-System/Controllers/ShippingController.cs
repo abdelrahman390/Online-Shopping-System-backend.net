@@ -31,6 +31,7 @@ namespace Online_Shopping_System.Controllers
             _dbContext = dbContext;
         }
 
+
         [HttpGet("getShippingTypes")]
         public IActionResult GetShippingTypes()
         {
@@ -63,121 +64,5 @@ namespace Online_Shopping_System.Controllers
             }
         }
         
-
-
-        //[HttpGet("previewCart")]
-        //public IActionResult PreviewCart(int userId)
-        //{
-        //    try
-        //    {
-        //        //var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-        //        //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
-        //        //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
-
-        //        //if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
-        //        //{
-        //        //    return Unauthorized("Missing data in the token.");
-        //        //}
-
-        //        Cart cart = _dbContext.Cart.FirstOrDefault(c => c.UserId == userId && c.CartStatus == "Pending");
-
-        //        //Product product = _dbContext.Products.FirstOrDefault(p => p.ProductId == productId);
-
-        //        if (cart == null)
-        //        {
-        //            return Ok(new List<object>());
-        //        }
-
-        //        //List<CartItem> cartItems = _dbContext.CartItem.Where(i => i.CartId == cart.CartId).ToList();
-        //        var cartItems = _dbContext.CartItem
-        //            .Where(i => i.CartId == cart.CartId)
-        //            .Select(i => new
-        //            {
-        //                i.CartItemId,
-        //                ProductName = i.Product.Name,
-        //                i.Quantity,
-        //                i.TotalPrice,
-        //                ItemPrice = i.Product.Price
-        //            })
-        //            .ToList();
-
-        //        //foreach (var item in cartItems)
-        //        //{
-        //        //    Product product = _dbContext.Products.FirstOrDefault(p => p.ProductId == item.ProductId);
-        //        //    item.TotalPrice = item.Quantity * 100;
-        //        //    item.
-        //        //}
-        //        //CartItem item = _dbContext.CartItem.FirstOrDefault(i => i.CartId == cart.UserId);
-
-        //        //if (product == null)
-        //        //{
-        //        //    return NotFound("Product not found.");
-        //        //}
-
-        //        //if (quntity <= 0)
-        //        //{
-        //        //    return BadRequest("Quantity must be greater than 0.");
-        //        //}
-
-        //        //if (quntity > product.Quantity)
-        //        //{
-        //        //    return BadRequest("Not enough products in stock.");
-        //        //}
-
-        //        //if (cart == null)
-        //        //{
-        //        //    cart = new Cart
-        //        //    {
-        //        //        UserId = userId,
-        //        //        TotalPrice = 0,
-        //        //        CreatedAt = DateTime.UtcNow,
-        //        //    };
-
-        //        //    _dbContext.Cart.Add(cart);
-        //        //    _dbContext.SaveChanges();
-        //        //}
-
-        //        //if (item == null)
-        //        //{
-        //        //    item = new CartItem
-        //        //    {
-        //        //        CartId = cart.CartId,
-        //        //        ProductId = product.ProductId,
-        //        //        Quantity = quntity,
-        //        //        TotalPrice = product.Price * quntity
-        //        //    };
-        //        //    _dbContext.CartItem.Add(item);
-        //        //    _dbContext.SaveChanges();
-        //        //}
-        //        //else
-        //        //{
-        //        //    item.Quantity += quntity;
-        //        //    item.TotalPrice += quntity * product.Price;
-        //        //}
-
-        //        //product.Quantity -= quntity;
-
-        //        //cart.TotalPrice += item.TotalPrice;
-
-        //        //_dbContext.CartItem.Add(item);
-
-        //        //_dbContext.SaveChanges();
-
-        //        return Ok(
-        //            cartItems
-        //        );
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Error: {ex.Message}");
-        //        return StatusCode(
-        //            500,
-        //            $"Error: {ex.Message}"
-        //        );
-        //    }
-        //}
-
-
     }
 }

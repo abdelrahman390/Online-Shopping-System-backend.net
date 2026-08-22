@@ -11,12 +11,12 @@ namespace Online_Shopping_System.Models.Orders
         public int CartId { get; set; }
         public int UserId { get; set; }
 
-        // Status: Delivered - InProgress
+        // Status: Pending - Delivered - InProgress
         public string OrderStatus { get; set; }
 
         // PaymentTypeNames: Cash - CreditCard - Wallet
         public string PaymentTypeName { get; set; } = "Cash";
-        public double TotalCost { get; set; }
+        public decimal TotalCost { get; set; }
 
         // Navigation property
         public Cart Cart { get; set; }

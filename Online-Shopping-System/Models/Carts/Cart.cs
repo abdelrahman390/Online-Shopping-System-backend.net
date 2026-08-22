@@ -8,7 +8,7 @@ namespace Online_Shopping_System.Models.Carts
     {
         public int CartId { get; set; }
         public int UserId { get; set; }
-        public double TotalPrice { get; set; }
+        public decimal TotalPrice { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         // status: Pending - Confirmed - Closed
         public string CartStatus { get; set; }

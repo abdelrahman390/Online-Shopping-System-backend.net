@@ -1,0 +1,8 @@
+﻿
+add Auth.
+
+make app conncurincy frendly.
+
+check unit testing.
+
+complete othe types of testing.
