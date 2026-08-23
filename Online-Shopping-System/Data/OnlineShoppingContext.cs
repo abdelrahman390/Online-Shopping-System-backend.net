@@ -95,11 +95,11 @@ namespace Online_Shopping_System.Data
             modelBuilder.Entity<Cart>()
                 .HasKey(c => c.CartId);
 
-            // User 1 ---- 1 Cart
+            // User 1 ---- * Cart
             modelBuilder.Entity<Cart>()
                 .HasOne(c => c.User)
-                .WithOne(u => u.Cart)
-                .HasForeignKey<Cart>(c => c.UserId)
+                .WithMany(u => u.Carts)
+                .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Cart 1 ---- * CartItems
@@ -134,7 +134,7 @@ namespace Online_Shopping_System.Data
             // User 1 ---- * Orders
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.User)
-                .WithMany(u => u.Order)
+                .WithMany(u => u.Orders)
                 .HasForeignKey(o => o.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 

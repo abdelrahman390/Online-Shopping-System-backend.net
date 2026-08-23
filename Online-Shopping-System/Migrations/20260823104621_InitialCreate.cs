@@ -121,7 +121,9 @@ namespace Online_Shopping_System.Migrations
                     UserTypeId = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordHashed = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    PasswordHashed = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    UserRole = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -193,7 +195,7 @@ namespace Online_Shopping_System.Migrations
                     CartId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PaymentTypeName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentTypeName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TotalCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
@@ -331,8 +333,7 @@ namespace Online_Shopping_System.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Carts_UserId",
                 table: "Carts",
-                column: "UserId",
-                unique: true);
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_CartId",

@@ -1,8 +1,12 @@
-﻿
-add Auth.
 
-make app conncurincy frendly.
+Add Auth.
 
-check unit testing.
+Make app conncurincy frendly.
 
-complete othe types of testing.
+Check unit testing.
+
+Complete othe types of testing.
+
+Search for database transaction.
+
+move cart and order confirmation after the payment from payment controller.

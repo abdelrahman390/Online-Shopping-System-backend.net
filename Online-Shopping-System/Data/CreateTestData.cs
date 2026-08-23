@@ -3,6 +3,7 @@ using Online_Shopping_System.Models.Payment;
 using Online_Shopping_System.Models.Products;
 using Online_Shopping_System.Models.Shipping;
 using Online_Shopping_System.Models.Users;
+using static market_watch.Controllers.RegisterController;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 
@@ -52,9 +53,11 @@ namespace Online_Shopping_System.Data
                 User newUser = new User
                 {
                     UserName = "User" + i.ToString(),
-                    Email = "Test" + i.ToString() + "@gmail.com",
-                    PasswordHashed = "gdfndnj",
-                    UserTypeId = 1
+                    Email = "abdelrahmanbo390@gmail.com",
+                    PasswordHashed = Array.Empty<byte>(),
+                    UserTypeId = 1,
+                    PasswordSalt = Array.Empty<byte>(),
+                    UserRole = "User"
                 };
 
                 _dbContext.Users.Add(newUser);

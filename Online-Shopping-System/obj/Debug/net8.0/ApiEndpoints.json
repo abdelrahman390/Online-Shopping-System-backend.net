@@ -146,6 +146,58 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "market_watch.Controllers.RegisterController",
+    "Method": "login",
+    "RelativePath": "Register/login",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "UserName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Password",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "market_watch.Controllers.RegisterController",
+    "Method": "register",
+    "RelativePath": "Register/register",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "UserName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "email",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Password",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "userRole",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Online_Shopping_System.Controllers.ShippingController",
     "Method": "GetShippingTypes",
     "RelativePath": "Shipping/getShippingTypes",

@@ -15,7 +15,7 @@ namespace Online_Shopping_System.Models.Orders
         public string OrderStatus { get; set; }
 
         // PaymentTypeNames: Cash - CreditCard - Wallet
-        public string PaymentTypeName { get; set; } = "Cash";
+        public string? PaymentTypeName { get; set; }
         public decimal TotalCost { get; set; }
 
         // Navigation property

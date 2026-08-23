@@ -45,8 +45,7 @@ namespace Online_Shopping_System.Migrations
 
                     b.HasKey("CartId");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Carts");
                 });
@@ -96,7 +95,6 @@ namespace Online_Shopping_System.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PaymentTypeName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TotalCost")
@@ -245,11 +243,19 @@ namespace Online_Shopping_System.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PasswordHashed")
+                    b.Property<byte[]>("PasswordHashed")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("UserRole")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -358,8 +364,8 @@ namespace Online_Shopping_System.Migrations
             modelBuilder.Entity("Online_Shopping_System.Models.Carts.Cart", b =>
                 {
                     b.HasOne("Online_Shopping_System.Models.Users.User", "User")
-                        .WithOne("Cart")
-                        .HasForeignKey("Online_Shopping_System.Models.Carts.Cart", "UserId")
+                        .WithMany("Carts")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -394,7 +400,7 @@ namespace Online_Shopping_System.Migrations
                         .IsRequired();
 
                     b.HasOne("Online_Shopping_System.Models.Users.User", "User")
-                        .WithMany("Order")
+                        .WithMany("Orders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -521,10 +527,9 @@ namespace Online_Shopping_System.Migrations
 
             modelBuilder.Entity("Online_Shopping_System.Models.Users.User", b =>
                 {
-                    b.Navigation("Cart")
-                        .IsRequired();
+                    b.Navigation("Carts");
 
-                    b.Navigation("Order");
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("Online_Shopping_System.Models.Users.UserType", b =>

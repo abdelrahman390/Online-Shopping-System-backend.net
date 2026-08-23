@@ -29,7 +29,7 @@ namespace Online_Shopping_System.Controllers
             _dbContext = dbContext;
         }
 
-
+        [Authorize]
         [HttpGet("getProducts")]
         public IActionResult getProducts()
         {

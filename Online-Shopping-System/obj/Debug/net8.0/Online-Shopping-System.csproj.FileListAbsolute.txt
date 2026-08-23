@@ -436,4 +436,7 @@ E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-
 E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-System\obj\Debug\net8.0\Online-Shopping-System.pdb
 E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-System\obj\Debug\net8.0\Online-Shopping-System.genruntimeconfig.cache
 E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-System\obj\Debug\net8.0\ref\Online-Shopping-System.dll
+E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-System\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-System\bin\Debug\net8.0\Konscious.Security.Cryptography.Argon2.dll
+E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-System\bin\Debug\net8.0\Konscious.Security.Cryptography.Blake2.dll
 E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-System\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

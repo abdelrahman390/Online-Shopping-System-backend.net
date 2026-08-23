@@ -1,0 +1,2 @@
+
+Error happen when user payd its order and wants to make a new cart, because the system does not allow creating more that one cart.

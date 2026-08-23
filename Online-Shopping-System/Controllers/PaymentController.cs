@@ -1,14 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Online_Shopping_System.Models.Carts;
 using Online_Shopping_System.Models.Orders;
 using Online_Shopping_System.Models.Payment;
-using Online_Shopping_System.Models.Products;
-using Online_Shopping_System.Models.Shipping;
+using Online_Shopping_System.Models.Users;
 using Online_Shopping_System.Data;
 using System.ComponentModel.Design;
 using System.Data;
@@ -78,14 +76,17 @@ namespace Online_Shopping_System.Controllers
                 }
 
                 order.OrderStatus = "Confirmed";
+                order.PaymentTypeName = "Cash";
                 cart.CartStatus = "Confirmed";
 
                 _dbContext.Payments.Add(cashpayment);
 
                 _dbContext.SaveChanges();
 
+                User user = _dbContext.Users.FirstOrDefault(u => u.UserId == userId);
+
                 await _emailService.SendEmailAsync(
-                        "abdelrahmanbo390@gmail.com",
+                        user.Email,
                         "Order Confirmation.",
                         "Hello from Online-Shopping-System, your order has benn confirmed."
                     );
@@ -105,7 +106,7 @@ namespace Online_Shopping_System.Controllers
         }
 
         [HttpPost("creditCardPay")]
-        public IActionResult CreditCardPay(int userId, string cardNumber)
+        public async Task<IActionResult> CreditCardPay(int userId, string cardNumber)
         {
 
             try
@@ -128,7 +129,7 @@ namespace Online_Shopping_System.Controllers
 
                 Payment creditCardPayment = new CreditCardPayment
                 {
-                    PaymentType = "Visa",
+                    PaymentType = "CreditCard",
                     CardNumber = cardNumber,
                 };
 
@@ -141,11 +142,23 @@ namespace Online_Shopping_System.Controllers
                 creditCardPayment.Amount = order.TotalCost;
                 creditCardPayment.Date = DateTimeOffset.Now;
 
+                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.CartId == order.CartId && c.CartStatus == "Pending");
+
                 order.OrderStatus = "Confirmed";
+                order.PaymentTypeName = "CreditCard";
+                cart.CartStatus = "Confirmed";
 
                 _dbContext.Payments.Add(creditCardPayment);
 
                 _dbContext.SaveChanges();
+
+                User user = _dbContext.Users.FirstOrDefault(u => u.UserId == userId);
+
+                await _emailService.SendEmailAsync(
+                    user.Email,
+                    "Order Confirmation.",
+                    "Hello from Online-Shopping-System, your order has benn confirmed."
+                );
 
                 return Ok(
                     $"OrderId: {order.OrderId} is now Paid and confirmed."
@@ -162,7 +175,7 @@ namespace Online_Shopping_System.Controllers
         }
 
         [HttpPost("WalletPay")]
-        public IActionResult WalletPay(int userId, string WalletNumber, string WalletProviderName)
+        public async Task<IActionResult> WalletPay(int userId, string WalletNumber, string WalletProviderName)
         {
 
             try
@@ -204,7 +217,21 @@ namespace Online_Shopping_System.Controllers
 
                 _dbContext.Payments.Add(walletPayment);
 
+                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.CartId == order.CartId && c.CartStatus == "Pending");
+
+                order.OrderStatus = "Confirmed";
+                order.PaymentTypeName = "Wallet";
+                cart.CartStatus = "Confirmed";
+
                 _dbContext.SaveChanges();
+
+                User user = _dbContext.Users.FirstOrDefault(u => u.UserId == userId);
+
+                await _emailService.SendEmailAsync(
+                    user.Email,
+                    "Order Confirmation.",
+                    "Hello from Online-Shopping-System, your order has benn confirmed."
+                );
 
                 return Ok(
                     $"OrderId: {order.OrderId} is now Paid and confirmed."
