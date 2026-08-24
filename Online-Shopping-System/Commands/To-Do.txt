@@ -1,12 +1,18 @@
 
-Add Auth.
+make admin panel for product management.
+
+make cronjob for order status update.
 
 Make app conncurincy frendly.
 
 Check unit testing.
 
-Complete othe types of testing.
+Complete other types of testing.
 
 Search for database transaction.
 
 move cart and order confirmation after the payment from payment controller.
+
+handle every cart and Orders status flow.
+
+handle error and return valid and meaningfull error messages and direct to prober page.

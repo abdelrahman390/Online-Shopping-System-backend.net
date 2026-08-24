@@ -1,20 +1,20 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Online_Shopping_System.Models.Carts;
 using Online_Shopping_System.Models.Orders;
 using Online_Shopping_System.Models.Payment;
 using Online_Shopping_System.Models.Users;
 using Online_Shopping_System.Data;
-using System.ComponentModel.Design;
-using System.Data;
-using System.Linq;
-using System.Net;
 using System.Security.Claims;
+//using System.ComponentModel.Design;
+//using System.Data;
+//using System.Linq;
+//using System.Net;
+//using Microsoft.Data.SqlClient;
+//using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore.Infrastructure;
+//using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 //using Online_Shopping_System.Services;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 
 namespace Online_Shopping_System.Controllers
@@ -33,26 +33,26 @@ namespace Online_Shopping_System.Controllers
             _emailService = emailService;
         }
 
-
+        [Authorize]
         [HttpPost("cashPay")]
-        public async Task<IActionResult> CashPay(int userId)
+        public async Task<IActionResult> CashPay()
         {
             try
             {
-                //var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
-                //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-                //if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
-                //{
-                //    return Unauthorized("Missing data in the token.");
-                //}
+                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                {
+                    return Unauthorized("Missing data in the token.");
+                }
 
-                Order order = _dbContext.Orders.FirstOrDefault(o => o.UserId == userId && o.OrderStatus == "Pending");
+                Order order = _dbContext.Orders.FirstOrDefault(o => o.UserId == int.Parse(userIdClaim.Value) && o.OrderStatus == "Pending");
 
                 if (order == null)
                 {
-                    return BadRequest($"Order not found. {userId}");
+                    return BadRequest($"Order not found. {int.Parse(userIdClaim.Value)}");
                 }
 
                 Payment cashpayment = new CashPayment
@@ -83,13 +83,13 @@ namespace Online_Shopping_System.Controllers
 
                 _dbContext.SaveChanges();
 
-                User user = _dbContext.Users.FirstOrDefault(u => u.UserId == userId);
+                User user = _dbContext.Users.FirstOrDefault(u => u.UserId == int.Parse(userIdClaim.Value));
 
-                await _emailService.SendEmailAsync(
-                        user.Email,
-                        "Order Confirmation.",
-                        "Hello from Online-Shopping-System, your order has benn confirmed."
-                    );
+                //await _emailService.SendEmailAsync(
+                //        user.Email,
+                //        "Order Confirmation.",
+                //        "Hello from Online-Shopping-System, your order has benn confirmed."
+                //    );
 
                 return Ok(
                     $"OrderId: {order.OrderId} is now Paid and confirmed."
@@ -105,22 +105,23 @@ namespace Online_Shopping_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("creditCardPay")]
-        public async Task<IActionResult> CreditCardPay(int userId, string cardNumber)
+        public async Task<IActionResult> CreditCardPay(string cardNumber)
         {
-
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
-                //var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
-                //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-                //if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
-                //{
-                //    return Unauthorized("Missing data in the token.");
-                //}
+                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                {
+                    return Unauthorized("Missing data in the token.");
+                }
 
-                Order order = _dbContext.Orders.FirstOrDefault(o => o.UserId == userId && o.OrderStatus == "Pending");
+                Order order = _dbContext.Orders.FirstOrDefault(o => o.UserId == int.Parse(userIdClaim.Value) && o.OrderStatus == "Pending");
 
                 if (order == null)
                 {
@@ -152,13 +153,18 @@ namespace Online_Shopping_System.Controllers
 
                 _dbContext.SaveChanges();
 
-                User user = _dbContext.Users.FirstOrDefault(u => u.UserId == userId);
+                User user = _dbContext.Users.FirstOrDefault(u => u.UserId == int.Parse(userIdClaim.Value));
 
-                await _emailService.SendEmailAsync(
-                    user.Email,
-                    "Order Confirmation.",
-                    "Hello from Online-Shopping-System, your order has benn confirmed."
-                );
+                Console.WriteLine($"Test: {cardNumber}");
+
+                //await _emailService.SendEmailAsync(
+                //    user.Email,
+                //    "Order Confirmation.",
+                //    "Hello from Online-Shopping-System, your order has benn confirmed."
+                //);
+                Console.WriteLine($"Test Down: {cardNumber}");
+
+                await transaction.CommitAsync();
 
                 return Ok(
                     $"OrderId: {order.OrderId} is now Paid and confirmed."
@@ -166,6 +172,8 @@ namespace Online_Shopping_System.Controllers
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync();
+
                 Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,
@@ -174,22 +182,23 @@ namespace Online_Shopping_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("WalletPay")]
-        public async Task<IActionResult> WalletPay(int userId, string WalletNumber, string WalletProviderName)
+        public async Task<IActionResult> WalletPay(string WalletNumber, string WalletProviderName)
         {
-
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
-                //var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
-                //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-                //if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
-                //{
-                //    return Unauthorized("Missing data in the token.");
-                //}
+                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                {
+                    return Unauthorized("Missing data in the token.");
+                }
 
-                Order order = _dbContext.Orders.FirstOrDefault(o => o.UserId == userId && o.OrderStatus == "Pending");
+                Order order = _dbContext.Orders.FirstOrDefault(o => o.UserId == int.Parse(userIdClaim.Value) && o.OrderStatus == "Pending");
 
                 if (order == null)
                 {
@@ -225,13 +234,15 @@ namespace Online_Shopping_System.Controllers
 
                 _dbContext.SaveChanges();
 
-                User user = _dbContext.Users.FirstOrDefault(u => u.UserId == userId);
+                User user = _dbContext.Users.FirstOrDefault(u => u.UserId == int.Parse(userIdClaim.Value));
 
-                await _emailService.SendEmailAsync(
-                    user.Email,
-                    "Order Confirmation.",
-                    "Hello from Online-Shopping-System, your order has benn confirmed."
-                );
+                //await _emailService.SendEmailAsync(
+                //    user.Email,
+                //    "Order Confirmation.",
+                //    "Hello from Online-Shopping-System, your order has benn confirmed."
+                //);
+
+                await transaction.CommitAsync();
 
                 return Ok(
                     $"OrderId: {order.OrderId} is now Paid and confirmed."
@@ -239,6 +250,8 @@ namespace Online_Shopping_System.Controllers
             }
             catch (Exception ex)
             {
+
+                await transaction.RollbackAsync();
                 Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,

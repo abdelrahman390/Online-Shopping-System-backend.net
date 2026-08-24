@@ -1,18 +1,18 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Online_Shopping_System.Models.Carts;
 using Online_Shopping_System.Models.Products;
 using Online_Shopping_System.Data;
-using System.ComponentModel.Design;
-using System.Data;
-using System.Linq;
-using System.Net;
 using System.Security.Claims;
+using System.Data;
+//using System.ComponentModel.Design;
+//using System.Linq;
+//using System.Net;
+//using Microsoft.Data.SqlClient;
+//using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore.Infrastructure;
 //using Online_Shopping_System.Services;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+//using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 
 namespace Online_Shopping_System.Controllers
@@ -30,16 +30,28 @@ namespace Online_Shopping_System.Controllers
             _dbContext = dbContext;
         }
 
+        [Authorize]
         [HttpPost("addToCart")]
-        public async Task<IActionResult> addToCart(int productId, int quantity, int userId)
+        public async Task<IActionResult> AddToCart(int productId, int quantity)
         {
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                {
+                    return Unauthorized("Missing data in the token.");
+                }
+
                 if (quantity <= 0)
                 {
                     return BadRequest("Quantity must be greater than 0.");
                 }
 
+                // --------- FOR PRODUCTION ---------------
                 //var affectedRows = await _dbContext.Products
                 //    .Where(p => p.ProductId == productId && p.Quantity >= quantity)
                 //    .ExecuteUpdateAsync(setters => setters
@@ -53,15 +65,16 @@ namespace Online_Shopping_System.Controllers
 
                 Product product = _dbContext.Products.FirstOrDefault(p => p.ProductId == productId);
 
-                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.UserId == userId && c.CartStatus == "Pending");
+                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.UserId == int.Parse(userIdClaim.Value) && c.CartStatus == "Pending");
 
                 if (product == null)
                 {
                     return NotFound("Product not found.");
                 }
 
-                if (quantity >= product.Quantity)
+                if (quantity > product.Quantity)
                 {
+                    Console.WriteLine($"quantity: {quantity}  |  product.Quantity: {product.Quantity}");
                     return BadRequest("Not enough products in stock.");
                 }
                 product.Quantity -= quantity;
@@ -70,9 +83,9 @@ namespace Online_Shopping_System.Controllers
                 {
                     cart = new Cart
                     {
-                        UserId = userId,
+                        UserId = int.Parse(userIdClaim.Value),
                         TotalPrice = 0,
-                        CreatedAt = DateTime.UtcNow,
+                        CreatedAt = DateTimeOffset.Now,
                         CartStatus = "Pending"
                     };
 
@@ -104,12 +117,16 @@ namespace Online_Shopping_System.Controllers
 
                 _dbContext.SaveChanges();
 
+                await transaction.CommitAsync();
+
                 return Ok(
                     $"Product: {product.ProductId} is now added to cart: {cart.CartId} as item: {item.CartItemId}"
                 );
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync();
+
                 Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,
@@ -119,30 +136,28 @@ namespace Online_Shopping_System.Controllers
         }
 
 
+        [Authorize]
         [HttpGet("previewCart")]
-        public IActionResult previewCart(int userId)
+        public IActionResult PreviewCart()
         {
             try
             {
-                //var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
-                //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-                //if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
-                //{
-                //    return Unauthorized("Missing data in the token.");
-                //}
+                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                {
+                    return Unauthorized("Missing data in the token.");
+                }
 
-                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.UserId == userId && c.CartStatus == "Pending");
-
-                //Product product = _dbContext.Products.FirstOrDefault(p => p.ProductId == productId);
+                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.UserId == int.Parse(userIdClaim.Value) && c.CartStatus == "Pending");
 
                 if(cart == null)
                 {
                     return Ok(new List<object>());
                 }
 
-                //List<CartItem> cartItems = _dbContext.CartItem.Where(i => i.CartId == cart.CartId).ToList();
                 var cartItems = _dbContext.CartItems
                     .Where(i => i.CartId == cart.CartId)
                     .Select(i => new
@@ -154,14 +169,6 @@ namespace Online_Shopping_System.Controllers
                         ItemPrice = i.Product.Price
                     })
                     .ToList();
-
-                //foreach (var item in cartItems)
-                //{
-                //    Product product = _dbContext.Products.FirstOrDefault(p => p.ProductId == item.ProductId);
-                //    item.TotalPrice = item.Quantity * 100;
-                //    item.
-                //}
-                //CartItem item = _dbContext.CartItem.FirstOrDefault(i => i.CartId == cart.UserId);
 
                 return Ok(
                     cartItems
@@ -177,7 +184,6 @@ namespace Online_Shopping_System.Controllers
                 );
             }
         }
-
 
     }
 }

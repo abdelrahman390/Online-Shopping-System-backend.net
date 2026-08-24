@@ -38,7 +38,7 @@ namespace Online_Shopping_SystemTests.Controllers
             using var context = CreateContext();
             var controller = CreateController(context);
 
-            var result = await controller.addToCart(1, 1, 1);
+            var result = await controller.AddToCart(1, 1);
 
             //var objectResult = Assert.IsType<ObjectResult>(result);
 
@@ -75,7 +75,7 @@ namespace Online_Shopping_SystemTests.Controllers
             Assert.Equal(1, product.ProductId);
 
             // Act
-            var result = await controller.addToCart(1, 0, 1);
+            var result = await controller.AddToCart(0, 1);
 
             // Assert
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);
@@ -104,7 +104,7 @@ namespace Online_Shopping_SystemTests.Controllers
             context.SaveChanges();
 
             // Act
-            var result = await controller.addToCart(1, 4, 1);
+            var result = await controller.AddToCart(4, 1);
 
             // Assert
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);
@@ -130,7 +130,7 @@ namespace Online_Shopping_SystemTests.Controllers
             context.SaveChanges();
 
             // Act
-            var result = await controller.addToCart(1, 1, 1);
+            var result = await controller.AddToCart(1, 1);
 
             // Assert
             var goodRequest = Assert.IsType<OkObjectResult>(result);
@@ -156,7 +156,7 @@ namespace Online_Shopping_SystemTests.Controllers
             context.SaveChanges();
 
             // Act
-            var result = await controller.addToCart(1, 1, 1);
+            var result = await controller.AddToCart(1, 1);
 
             // Assert
             var goodRequest = Assert.IsType<OkObjectResult>(result);
@@ -172,7 +172,7 @@ namespace Online_Shopping_SystemTests.Controllers
             var controller = CreateController(context);
 
             // Act
-            var result =  controller.previewCart(1);
+            var result =  controller.PreviewCart();
 
             // Assert
             var goodRequest = Assert.IsType<OkObjectResult>(result);
@@ -231,7 +231,7 @@ namespace Online_Shopping_SystemTests.Controllers
             //Console.WriteLine($"previewCart_getUserCart_ReturnsOk: {cartItems.Count()}");
 
             // Act
-            var result = controller.previewCart(1);
+            var result = controller.PreviewCart();
 
             // Assert
             var goodRequest = Assert.IsType<OkObjectResult>(result);

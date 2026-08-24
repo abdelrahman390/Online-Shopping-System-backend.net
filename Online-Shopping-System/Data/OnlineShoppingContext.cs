@@ -224,6 +224,12 @@ namespace Online_Shopping_System.Data
             modelBuilder.Entity<ShippingType>()
                 .ToTable("ShippingTypes");
 
+            modelBuilder.Entity<ShippingRecords>()
+                .HasOne(sr => sr.ShippingType)
+                .WithMany(st => st.ShippingRecords)
+                .HasForeignKey(sr => sr.ShippingTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
 
             // ==========================================
             // USER TYPE

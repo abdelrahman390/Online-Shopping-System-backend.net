@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Online_Shopping_System.Models.Products;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Online_Shopping_System.Data;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using System.ComponentModel.Design;
-using System.Data;
-using System.Security.Claims;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.Data.SqlClient;
+//using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore.Infrastructure;
+//using System.ComponentModel.Design;
+//using System.Data;
+//using System.Security.Claims;
 //using Online_Shopping_System.Services;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using System.Net;
+//using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+//using System.Net;
 
 
 namespace Online_Shopping_System.Controllers
@@ -45,13 +45,13 @@ namespace Online_Shopping_System.Controllers
                 //    return Unauthorized("Missing data in the token.");
                 //}
 
-                List<Product> Companies = _dbContext.Products.ToList();
+                List<Product> Products = _dbContext.Products.ToList();
 
                 //_AuditLogsService.Log(int.Parse(userIdClaim.Value), "getCompanies", "Companies", DateTime.Now, userIpAdress);
 
                 //Console.WriteLine($"Test from AuditLogs second: {testVal}");
 
-                return Ok(Companies);
+                return Ok(Products);
 
             }
             catch (Exception ex)

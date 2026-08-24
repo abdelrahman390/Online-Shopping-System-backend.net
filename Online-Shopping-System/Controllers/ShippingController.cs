@@ -1,19 +1,19 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Online_Shopping_System.Models.Carts;
-using Online_Shopping_System.Models.Products;
 using Online_Shopping_System.Data;
-using System.ComponentModel.Design;
-using System.Data;
-using System.Linq;
-using System.Net;
 using System.Security.Claims;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.Data.SqlClient;
+//using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore.Infrastructure;
+//using Online_Shopping_System.Models.Carts;
+//using Online_Shopping_System.Models.Products;
+//using System.ComponentModel.Design;
+//using System.Data;
+//using System.Linq;
+//using System.Net;
 //using Online_Shopping_System.Services;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+//using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 
 namespace Online_Shopping_System.Controllers
@@ -31,21 +31,21 @@ namespace Online_Shopping_System.Controllers
             _dbContext = dbContext;
         }
 
-
+        [Authorize]
         [HttpGet("getShippingTypes")]
         public IActionResult GetShippingTypes()
         {
 
             try
             {
-                //var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
-                //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-                //if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
-                //{
-                //    return Unauthorized("Missing data in the token.");
-                //}
+                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                {
+                    return Unauthorized("Missing data in the token.");
+                }
 
                 var cart = _dbContext.ShippingTypes.ToList();
 

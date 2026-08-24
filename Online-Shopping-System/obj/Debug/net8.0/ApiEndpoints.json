@@ -1,7 +1,7 @@
 [
   {
     "ContainingType": "Online_Shopping_System.Controllers.CartController",
-    "Method": "addToCart",
+    "Method": "AddToCart",
     "RelativePath": "Cart/addToCart",
     "HttpMethod": "POST",
     "IsController": true,
@@ -16,36 +16,15 @@
         "Name": "quantity",
         "Type": "System.Int32",
         "IsRequired": false
-      },
-      {
-        "Name": "userId",
-        "Type": "System.Int32",
-        "IsRequired": false
       }
     ],
     "ReturnTypes": []
   },
   {
     "ContainingType": "Online_Shopping_System.Controllers.CartController",
-    "Method": "previewCart",
+    "Method": "PreviewCart",
     "RelativePath": "Cart/previewCart",
     "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "userId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Online_Shopping_System.Controllers.EmailController",
-    "Method": "TestEmail",
-    "RelativePath": "Email/test",
-    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
@@ -60,16 +39,31 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "userId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
         "Name": "shippingTypeId",
         "Type": "System.Int32",
         "IsRequired": false
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Online_Shopping_System.Controllers.OrderController",
+    "Method": "getOrders",
+    "RelativePath": "Order/getOrders",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Online_Shopping_System.Controllers.OrderController",
+    "Method": "getUserUnpaidOrder",
+    "RelativePath": "Order/getUserUnpaidOrder",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   },
   {
@@ -79,13 +73,7 @@
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
-    "Parameters": [
-      {
-        "Name": "userId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
+    "Parameters": [],
     "ReturnTypes": []
   },
   {
@@ -96,11 +84,6 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [
-      {
-        "Name": "userId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
       {
         "Name": "cardNumber",
         "Type": "System.String",
@@ -117,11 +100,6 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [
-      {
-        "Name": "userId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
       {
         "Name": "WalletNumber",
         "Type": "System.String",
@@ -195,6 +173,26 @@
         "IsRequired": false
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ReportsController",
+    "Method": "OrdersExcel",
+    "RelativePath": "Reports/orders/excel",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ReportsController",
+    "Method": "OrdersPdf",
+    "RelativePath": "Reports/orders/pdf",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   },
   {

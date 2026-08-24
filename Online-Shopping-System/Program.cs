@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using Online_Shopping_System.Data;
 using Online_Shopping_System.Services;
 using System.Text;
+using QuestPDF.Infrastructure;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,6 +44,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.AddHttpClient<EmailService>();
 builder.Services.AddScoped<CreateTestData>();
+builder.Services.AddScoped<ReportService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactPolicy", policy =>
@@ -86,6 +88,8 @@ builder.Services.AddDbContext<OnlineShoppingContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
     ));
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 var app = builder.Build();
 

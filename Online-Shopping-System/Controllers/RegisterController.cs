@@ -3,10 +3,10 @@ using Online_Shopping_System.Data;
 using Online_Shopping_System.Models.Users;
 using Online_Shopping_System.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+//using System.Data;
+//using System.Security.Claims;
 
 namespace market_watch.Controllers
 {
