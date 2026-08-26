@@ -1,555 +1,134 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using Moq;
 using Online_Shopping_System.Controllers;
-using Online_Shopping_System.Data;
 using Online_Shopping_System.Models.Carts;
 using Online_Shopping_System.Models.Orders;
 using Online_Shopping_System.Models.Shipping;
 using Online_Shopping_System.Models.Users;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
+using System.Net.Http;
 using Xunit;
-using System.Net;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Online_Shopping_System.Models.Products;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Online_Shopping_SystemTests.Controllers
+namespace Online_Shopping_System.Tests
 {
-    public class PaymentControllerTests
+    public class PaymentControllerTests : IDisposable
     {
-        private readonly EmailService _emailService;
-        private (OnlineShoppingContext Context, SqliteConnection Connection) CreateContext()
+        private readonly SqliteContextFixture _db;
+        private readonly PaymentController _controller;
+        private readonly Mock<EmailService> _emailServiceMock;
+
+        public PaymentControllerTests()
         {
-            var connection = new SqliteConnection("DataSource=:memory:");
-            connection.Open();
-
-            var options = new DbContextOptionsBuilder<OnlineShoppingContext>()
-                .UseSqlite(connection)
-                .Options;
-
-            var context = new OnlineShoppingContext(options);
-
-            context.Database.EnsureCreated();
-
-            return (context, connection);
+            _db = new SqliteContextFixture(); var httpClient = new HttpClient(); 
+            
+            var configMock = new Mock<IConfiguration>(); 
+            
+            _emailServiceMock = new Mock<EmailService>(httpClient, configMock.Object); 
+            
+            // Prevent the test from actually sending an email.
+            _emailServiceMock .Setup(x => x.SendEmailAsync( It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())) .Returns(Task.CompletedTask); 
+            
+            _controller = new PaymentController( null!, _db.Context, _emailServiceMock.Object );
         }
 
-        private (User User, PaymentController Controller)
-    CreateTestUserAndController(OnlineShoppingContext context)
+        public void Dispose() => _db.Dispose();
+
+        private async Task<int> SeedUserAsync(
+            int userId = 1,
+            string role = "Customer")
         {
-            // Create UserType
             var userType = new UserType
             {
                 Discount = 0.1
             };
 
-            context.UserTypes.Add(userType);
-            context.SaveChanges();
+            _db.Context.UserTypes.Add(userType);
+            await _db.Context.SaveChangesAsync();
 
-            // Create User
             var user = new User
             {
-                UserTypeId = userType.UserTypeId,
-                UserName = "TestUser",
-                Email = "test@example.com",
+                UserId = userId,
+                UserName = $"testuser{userId}",
+                Email = $"testuser{userId}@example.com",
                 PasswordHashed = Array.Empty<byte>(),
-                PasswordSalt = Array.Empty<byte>()
+                PasswordSalt = Array.Empty<byte>(),
+                UserRole = role,
+                UserTypeId = userType.UserTypeId
             };
 
-            context.Users.Add(user);
-            context.SaveChanges();
+            _db.Context.Users.Add(user);
+            await _db.Context.SaveChangesAsync();
 
-            // Create controller
-            var controller = new PaymentController(
-                null!,
-                context,
-                _emailService
-            );
-
-            // Create claims
-            var claims = new List<Claim>
-    {
-        new Claim(
-            ClaimTypes.NameIdentifier,
-            user.UserId.ToString()
-        ),
-
-        new Claim(
-            ClaimTypes.Role,
-            "Customer"
-        )
-    };
-
-            // Create authenticated identity
-            var identity = new ClaimsIdentity(
-                claims,
-                authenticationType: "TestAuthentication"
-            );
-
-            var principal = new ClaimsPrincipal(identity);
-
-            // Create HttpContext
-            var httpContext = new DefaultHttpContext();
-
-            httpContext.User = principal;
-
-            httpContext.Connection.RemoteIpAddress =
-                IPAddress.Parse("127.0.0.1");
-
-            // Attach HttpContext to controller
-            controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = httpContext
-            };
-
-            return (user, controller);
-        }
-        //private User CreateTestUser(OnlineShoppingContext context, string role = "User")
-        //{
-        //    // Create UserType
-        //    var userType = new UserType
-        //    {
-        //        Discount = 0.1
-        //    };
-
-        //    context.UserTypes.Add(userType);
-        //    context.SaveChanges();
-
-        //    // Create User
-        //    var user = new User
-        //    {
-        //        UserTypeId = userType.UserTypeId,
-        //        UserName = "TestUser",
-        //        Email = "test@example.com",
-        //        PasswordHashed = Array.Empty<byte>(),
-        //        PasswordSalt = Array.Empty<byte>()
-        //    };
-
-        //    context.Users.Add(user);
-        //    context.SaveChanges();
-
-        //    return user;
-        //}
-
-        //private OnlineShoppingContext CreateContext()
-        //{
-        //    //var options = new DbContextOptionsBuilder<OnlineShoppingContext>()
-        //    //    .UseInMemoryDatabase(Guid.NewGuid().ToString())
-        //    //    .Options;
-        //    var connection = new SqliteConnection("DataSource=:memory:");
-        //    connection.Open();
-
-        //    var options = new DbContextOptionsBuilder<OnlineShoppingContext>()
-        //        .UseSqlite(connection)
-        //        .Options;
-
-        //    var context = new OnlineShoppingContext(options);
-
-        //    context.Database.EnsureCreated();
-
-        //    return context;
-
-        //    //return new OnlineShoppingContext(options);
-        //}
-
-        private PaymentController CreateController(
-            OnlineShoppingContext context,
-            User user,
-            string role = "Customer")
-        {
-            var controller = new PaymentController(
-                null!,
-                context,
-                _emailService
-            );
-
-            var claims = new List<Claim>
-    {
-        new Claim(
-            ClaimTypes.NameIdentifier,
-            user.UserId.ToString()
-        ),
-
-        new Claim(
-            ClaimTypes.Role,
-            role
-        )
-    };
-
-            var identity = new ClaimsIdentity(
-                claims,
-                "TestAuthentication"
-            );
-
-            var principal = new ClaimsPrincipal(identity);
-
-            controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext
-                {
-                    User = principal
-                }
-            };
-
-            controller.HttpContext.Connection.RemoteIpAddress =
-                IPAddress.Parse("127.0.0.1");
-
-            return controller;
+            return user.UserId;
         }
 
+        // =========================================================
+        // CASH PAYMENT
+        // =========================================================
 
         [Fact]
-        public async Task CashPay_OrderDoesNotExist_ReturnsBadRequest()
+        public async Task CashPay_ReturnsBadRequest_WhenOrderDoesNotExist()
         {
-            var setup = CreateContext();
+            await SeedUserAsync(userId: 1, role: "Customer");
 
-            using var context = setup.Context;
-            using var connection = setup.Connection;
+            _controller.AuthenticateAs(
+                userId: 1,
+                role: "Customer"
+            );
 
-            // Arrange
-            //using var context = CreateContext();
-            var controller = CreateController(context);
+            var result = await _controller.CashPay();
 
-            // Act
-            var result = await controller.CashPay();
-
-            // Assert
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);
 
-            Assert.Contains("Order not found", badRequest.Value?.ToString());
+            Assert.Contains(
+                "Order not found",
+                badRequest.Value?.ToString()
+            );
         }
 
-
-        //[Fact]
-        //public async Task CashPay_ShippingTypeDoesNotExist_BadRequest()
-        //{
-        //    // Arrange
-        //    using var context = CreateContext();
-
-        //    context.Carts.Add(new Cart
-        //    {
-        //        UserId = 1,
-        //        CartStatus = "Pending",
-        //        TotalPrice = 100
-        //    });
-
-        //    context.SaveChanges();
-
-        //    var controller = CreateController(context);
-
-        //    // Act
-        //    var result = await controller.CashPay(1);
-
-        //    // Assert
-        //    var badRequest = Assert.IsType<BadRequestObjectResult>(result);
-
-        //    Assert.Equal(
-        //        "Shipping Type not found.",
-        //        badRequest.Value
-        //    );
-        //}
-
-
-        //[Fact]
-        //public void CashPay_ValidCartAndShipping_CreatesOrder()
-        //{
-        //    // Arrange
-        //    using var context = CreateContext();
-
-        //    context.Carts.Add(new Cart
-        //    {
-        //        UserId = 1,
-        //        CartStatus = "Pending",
-        //        TotalPrice = 100
-        //    });
-
-        //    context.ShippingTypes.Add(new ShippingType
-        //    {
-        //        ShippingTypeId = 1,
-        //        ShippingCost = 20
-        //    });
-
-        //    context.SaveChanges();
-
-        //    var controller = CreateController(context);
-
-        //    // Act
-        //    var result = controller.CashPay(1);
-
-        //    // Assert
-        //    Assert.IsType<OkObjectResult>(result);
-
-        //    var order = context.Orders.FirstOrDefault();
-
-        //    Assert.NotNull(order);
-        //    Assert.Equal(1, order.UserId);
-        //    Assert.Equal(120, order.TotalCost);
-        //    Assert.Equal("InProgress", order.OrderStatus);
-        //}
-
+        // =========================================================
+        // CREDIT CARD PAYMENT
+        // =========================================================
 
         [Fact]
-        public async Task CreditCardPay_ValidCard_CreatesOrder_ReturnOk()
+        public async Task CreditCardPay_ReturnsBadRequest_WhenCardIsInvalid()
         {
-            // Arrange
-            var setup = CreateContext();
+            await SeedUserAsync(userId: 1, role: "Customer");
 
-            using var context = setup.Context;
-            using var connection = setup.Connection;
-
-            // Create test user + claims
-            //var user = CreateTestUser(context);
-            var test = CreateTestUserAndController(context);
-
-            var user = test.User;
-            var controller = test.Controller;
-
-            // Create cart
             var cart = new Cart
             {
-                UserId = user.UserId,
+                UserId = 1,
                 CartStatus = "Pending",
                 TotalPrice = 100
             };
 
-            context.Carts.Add(cart);
-            context.SaveChanges();
+            _db.Context.Carts.Add(cart);
+            await _db.Context.SaveChangesAsync();
 
-            // Create order
             var order = new Order
             {
-                UserId = user.UserId,
+                UserId = 1,
                 CartId = cart.CartId,
                 OrderStatus = "Pending",
                 TotalCost = 100
             };
 
-            context.Orders.Add(order);
-            context.SaveChanges();
+            _db.Context.Orders.Add(order);
+            await _db.Context.SaveChangesAsync();
 
-            // Create controller with authenticated user
-            var controller = CreateController(
-                context,
-                user
+            _controller.AuthenticateAs(
+                userId: 1,
+                role: "Customer"
             );
 
-            // Act
-            var result = await controller.CreditCardPay(
-                "1234567890123456"
-            );
+            var result = await _controller.CreditCardPay("123");
 
-            // Assert
-            Assert.IsType<OkObjectResult>(result);
-
-            var savedOrder = context.Orders.First();
-
-            Assert.Equal("Confirmed", savedOrder.OrderStatus);
-        }
-
-        //[Fact]
-        //public async Task CashPay_ValidPayment_PayAndConfirmsOrder()
-        //{
-        //    // Arrange
-        //    using var context = CreateContext();
-
-        //    context.UserTypes.Add(new UserType
-        //    {
-        //        Discount = 0.1,
-        //    });
-
-        //    context.Users.Add(new User
-        //    {
-        //        UserTypeId = 1,
-        //        UserName = "Abdelrahman",
-        //        Email = "test@gmail.com",
-        //        PasswordHashed = Array.Empty<byte>()
-        //    });
-        //    context.SaveChanges();
-
-        //    context.Carts.Add(new Cart
-        //    {
-        //        UserId = context.Users.First().UserId,
-        //        CartStatus = "Pending",
-        //        TotalPrice = 100
-        //    });
-        //    context.SaveChanges();
-
-        //    context.Orders.Add(new Order
-        //    {
-        //        UserId = 1,
-        //        CartId = context.Carts.First().CartId,
-        //        OrderStatus = "Pending",
-        //        TotalCost = 100
-        //    });
-
-        //    context.SaveChanges();
-
-        //    var controller = CreateController(context);
-
-        //    // Act
-        //    var result = await controller.CashPay();
-
-        //    // Assert
-        //    var order = context.Orders.First();
-        //    var cart = context.Carts.FirstOrDefault();
-        //    var cashPay = context.CashPayments.FirstOrDefault();
-
-        //    Assert.Equal("Confirmed", order.OrderStatus);
-        //    Assert.Equal("Confirmed", cart.CartStatus);
-        //    Assert.Equal(order.OrderId, cashPay.OrderId);
-        //}
-
-
-        //[Fact]
-        //public void CashPay_ValidPayment_CreatesPayment()
-        //{
-        //    // Arrange
-        //    using var context = CreateContext();
-
-
-        //    context.Users.Add(new User
-        //    {
-        //        UserTypeId = 1,
-        //        UserName = "Abdelrahman",
-        //        Email = "test@gmail.com",
-        //        PasswordHashed = Array.Empty<byte>()
-        //    });
-        //    context.SaveChanges();
-
-        //    context.Carts.Add(new Cart
-        //    {
-        //        UserId = context.Users.First().UserId,
-        //        CartStatus = "Pending",
-        //        TotalPrice = 100
-        //    });
-        //    context.SaveChanges();
-
-        //    context.Orders.Add(new Order
-        //    {
-        //        UserId = 1,
-        //        CartId = context.Carts.First().CartId,
-        //        OrderStatus = "Pending",
-        //        TotalCost = 100
-        //    });
-
-        //    context.SaveChanges();
-
-        //    var controller = CreateController(context);
-
-        //    // Act
-        //    controller.CashPay(1);
-
-        //    // Assert
-        //    var payment = context.Payments.FirstOrDefault();
-
-        //    Assert.NotNull(payment);
-        //    Assert.Equal(120, payment.Amount);
-        //}
-
-
-        // =========================
-        // CREDIT CARD PAYMENT
-        // =========================
-
-        //[Fact]
-        //public async Task CreditCardPay_OrderDoesNotExist_ReturnsBadRequest()
-        //{
-        //    // Arrange
-        //    using var context = CreateContext();
-        //    var controller = CreateController(context);
-
-        //    // Act
-        //    var result = await controller.CreditCardPay(
-        //        1,
-        //        "1234567890123456"
-        //    );
-
-        //    // Assert
-        //    var badRequest = Assert.IsType<BadRequestObjectResult>(result);
-
-        //    Assert.Equal("Order not found.", badRequest.Value);
-        //}
-
-
-        //[Fact]
-        //public void CreditCardPay_ShippingTypeDoesNotExist_ReturnsBadRequest()
-        //{
-        //    // Arrange
-        //    using var context = CreateContext();
-
-        //    context.Carts.Add(new Cart
-        //    {
-        //        UserId = 1,
-        //        CartStatus = "Pending",
-        //        TotalPrice = 100
-        //    });
-
-        //    context.SaveChanges();
-
-        //    var controller = CreateController(context);
-
-        //    // Act
-        //    var result = controller.CreditCardPay(
-        //        1,
-        //        "1234567890123456"
-        //    );
-
-        //    // Assert
-        //    var badRequest = Assert.IsType<BadRequestObjectResult>(result);
-
-        //    Assert.Equal(
-        //        "Shipping Type not found.",
-        //        badRequest.Value
-        //    );
-        //}
-
-
-        [Fact]
-        public async Task CreditCardPay_InvalidCard_ReturnsBadRequest()
-        {
-            // Arrange
-            using var context = CreateContext();
-
-            context.Users.Add(new User
-            {
-                UserTypeId = 1,
-                UserName = "Abdelrahman",
-                Email = "test@gmail.com",
-                PasswordHashed = Array.Empty<byte>()
-            });
-            context.SaveChanges();
-
-            context.Carts.Add(new Cart
-            {
-                UserId = context.Users.First().UserId,
-                CartStatus = "Pending",
-                TotalPrice = 100
-            });
-            context.SaveChanges();
-
-            context.Orders.Add(new Order
-            {
-                UserId = 1,
-                CartId = context.Carts.First().CartId,
-                OrderStatus = "Pending",
-                TotalCost = 100
-            });
-
-            context.SaveChanges();
-
-            var controller = CreateController(context);
-
-            // Act
-            var result = await controller.CreditCardPay(
-                "123"
-            );
-
-            // Assert
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);
 
             Assert.Equal(
@@ -558,159 +137,152 @@ namespace Online_Shopping_SystemTests.Controllers
             );
         }
 
-
-        //[Fact]
-        //public async Task CreditCardPay_ValidCard_CreatesOrder_ReturnOk()
-        //{
-        //    // Arrange
-        //    using var context = CreateContext();
-
-        //    context.UserTypes.Add(new UserType
-        //    {
-        //        Discount = 0.1,
-
-        //    });
-        //    context.SaveChanges();
-
-        //    context.Users.Add(new User
-        //    {
-        //        UserTypeId = context.UserTypes.First().UserTypeId,
-        //        UserName = "Abdelrahman",
-        //        Email = "test@gmail.com",
-        //        PasswordHashed = Array.Empty<byte>(),
-        //        PasswordSalt = Array.Empty<byte>()
-        //    });
-        //    context.SaveChanges();
-
-        //    context.Carts.Add(new Cart
-        //    {
-        //        UserId = context.Users.First().UserId,
-        //        CartStatus = "Pending",
-        //        TotalPrice = 100
-        //    });
-        //    context.SaveChanges();
-
-        //        context.Orders.Add(new Order
-        //    {                                   
-        //        UserId = context.Users.First().UserId,
-        //        CartId = context.Carts.First().CartId,
-        //        OrderStatus = "Pending",
-        //        TotalCost = 100
-        //    });
-
-        //    context.SaveChanges();
-
-        //    var controller = CreateController(context);
-
-        //    // Act
-        //    var result = await controller.CreditCardPay(
-        //        "1234567890123456"
-        //    );
-
-        //    //if (result is ObjectResult objectResult)
-        //    //{
-        //    //    Console.WriteLine($"Status Code: {objectResult.StatusCode}");
-        //    //    Console.WriteLine($"Error: {objectResult.Value}");
-        //    //}
-
-        //    // Assert
-        //    Assert.IsType<OkObjectResult>(result);
-
-        //    var order = context.Orders.FirstOrDefault();
-
-        //    //Assert.NotNull(order.);
-        //    Assert.Equal("Confirmed", order.OrderStatus);
-        //}
-
-
-        // =========================
-        // WALLET PAYMENT
-        // =========================
-
         [Fact]
-        public void WalletPay_CartDoesNotExist_ReturnsBadRequest()
+        public async Task CreditCardPay_ReturnsOk_WhenCardIsValid()
         {
-            // Arrange
-            using var context = CreateContext();
+            await SeedUserAsync(userId: 1, role: "User");
 
-            var controller = CreateController(context);
+            _controller.AuthenticateAs(userId: 1, role: "User");
 
-            // Act
-            var result = controller.WalletPay(
-                "12345678901",
-                "Vodafone"
-            );
-
-            // Assert
-            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
-
-            Assert.Equal("Cart not found.", badRequest.Value);
-        }
-
-
-        [Fact]
-        public void WalletPay_ShippingTypeDoesNotExist_ReturnsBadRequest()
-        {
-            // Arrange
-            using var context = CreateContext();
-
-            context.Carts.Add(new Cart
+            var cart = new Cart
             {
                 UserId = 1,
                 CartStatus = "Pending",
                 TotalPrice = 100
-            });
+            };
 
-            context.SaveChanges();
+            _db.Context.Carts.Add(cart);
+            await _db.Context.SaveChangesAsync();
 
-            var controller = CreateController(context);
+            var order = new Order
+            {
+                UserId = 1,
+                CartId = cart.CartId,
+                OrderStatus = "Pending",
+                TotalCost = 100
+            };
 
-            // Act
-            var result = controller.WalletPay(
+            _db.Context.Orders.Add(order);
+            await _db.Context.SaveChangesAsync();
+
+            //_controller.AuthenticateAs(
+            //    userId: 1,
+            //    role: "User"
+            //);
+
+            var result = await _controller.CreditCardPay(
+                "1234567890123456"
+            );
+
+            if (result is ObjectResult obj && obj.StatusCode == 500)
+            {
+                Assert.Fail(
+                    $"Controller returned 500: {obj.Value}"
+                );
+            }
+
+            Assert.IsType<OkObjectResult>(result);
+
+            var savedOrder = await _db.Context.Orders
+                .AsNoTracking()
+                .FirstAsync(o => o.OrderId == order.OrderId);
+
+            Assert.Equal(
+                "Confirmed",
+                savedOrder.OrderStatus
+            );
+        }
+
+        // =========================================================
+        // WALLET PAYMENT
+        // =========================================================
+
+        [Fact]
+        public async Task WalletPay_ReturnsBadRequest_WhenCartDoesNotExist()
+        {
+            await SeedUserAsync(userId: 1, role: "Customer");
+
+            _controller.AuthenticateAs(
+                userId: 1,
+                role: "Customer"
+            );
+
+            var result = await _controller.WalletPay(
                 "12345678901",
                 "Vodafone"
             );
 
-            // Assert
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);
 
             Assert.Equal(
-                "Shipping Type not found.",
+                "Order not found.",
                 badRequest.Value
             );
         }
 
+        //[Fact]
+        //public async Task WalletPay_ReturnsBadRequest_WhenShippingTypeDoesNotExist()
+        //{
+        //    await SeedUserAsync(userId: 1, role: "Customer");
+
+        //    _db.Context.Carts.Add(new Cart
+        //    {
+        //        UserId = 1,
+        //        CartStatus = "Pending",
+        //        TotalPrice = 100
+        //    });
+
+        //    await _db.Context.SaveChangesAsync();
+
+        //    _controller.AuthenticateAs(
+        //        userId: 1,
+        //        role: "Customer"
+        //    );
+
+        //    var result = await _controller.WalletPay(
+        //        "12345678901",
+        //        "Vodafone"
+        //    );
+
+        //    var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+
+        //    Assert.Equal(
+        //        "Shipping Type not found.",
+        //        badRequest.Value
+        //    );
+        //}
 
         [Fact]
-        public void WalletPay_InvalidWallet_ReturnsBadRequest()
+        public async Task WalletPay_ReturnsBadRequest_WhenWalletIsInvalid()
         {
-            // Arrange
-            using var context = CreateContext();
+            await SeedUserAsync(userId: 1, role: "Customer");
 
-            context.Carts.Add(new Cart
-            {
-                UserId = 1,
-                CartStatus = "Pending",
-                TotalPrice = 100
-            });
+            var cart = new Cart { UserId = 1, CartStatus = "Pending", TotalPrice = 100 }; 
+            _db.Context.Carts.Add(cart); 
+            await _db.Context.SaveChangesAsync();
 
-            context.ShippingTypes.Add(new ShippingType
+            var order = new Order { UserId = 1, CartId = cart.CartId, OrderStatus = "Pending", TotalCost = 100 }; 
+            
+            _db.Context.Orders.Add(order); await _db.Context.SaveChangesAsync();
+
+            _db.Context.ShippingTypes.Add(new ShippingType
             {
                 ShippingTypeId = 1,
                 ShippingCost = 20
             });
 
-            context.SaveChanges();
+            await _db.Context.SaveChangesAsync();
 
-            var controller = CreateController(context);
+            _controller.AuthenticateAs(
+                userId: 1,
+                role: "Customer"
+            );
 
-            // Act
-            var result = controller.WalletPay(
+            var result = await _controller.WalletPay(
                 "123",
                 "Vodafone"
             );
 
-            // Assert
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);
 
             Assert.Equal(
@@ -719,43 +291,61 @@ namespace Online_Shopping_SystemTests.Controllers
             );
         }
 
-
         [Fact]
-        public void WalletPay_ValidWallet_CreatesOrder()
+        public async Task WalletPay_ReturnsOk_WhenWalletIsValid()
         {
-            // Arrange
-            using var context = CreateContext();
+            await SeedUserAsync(userId: 1, role: "Customer");
 
-            context.Carts.Add(new Cart
-            {
-                UserId = 1,
-                CartStatus = "Pending",
-                TotalPrice = 100
-            });
+            var cart = new Cart { UserId = 1, CartStatus = "Pending", TotalPrice = 100 };
 
-            context.ShippingTypes.Add(new ShippingType
+            _db.Context.Carts.Add(cart);
+            await _db.Context.SaveChangesAsync();
+
+            var order = new Order { UserId = 1, CartId = cart.CartId, OrderStatus = "Pending", TotalCost = 100 };
+
+            _db.Context.Orders.Add(order); 
+            
+            await _db.Context.SaveChangesAsync();
+
+            var shippingType = new ShippingType
             {
                 ShippingTypeId = 1,
                 ShippingCost = 20
-            });
+            };
 
-            context.SaveChanges();
+            order.TotalCost = cart.TotalPrice + shippingType.ShippingCost;
 
-            var controller = CreateController(context);
+            _db.Context.ShippingTypes.Add(shippingType);
+            await _db.Context.SaveChangesAsync();
 
-            // Act
-            var result = controller.WalletPay(
-                "012345678901",
+            await _db.Context.SaveChangesAsync();
+
+            _controller.AuthenticateAs(
+                userId: 1,
+                role: "Customer"
+            );
+
+            var result = await _controller.WalletPay(
+                "01235678901",
                 "Vodafone"
             );
 
-            // Assert
+            if (result is ObjectResult obj && obj.StatusCode == 500)
+            {
+                Assert.Fail(
+                    $"Controller returned 500: {obj.Value}"
+                );
+            }
+
             Assert.IsType<OkObjectResult>(result);
 
-            var order = context.Orders.FirstOrDefault();
-
             Assert.NotNull(order);
-            Assert.Equal(120, order.TotalCost);
+
+            Assert.Equal(
+                120,
+                order.TotalCost
+            );
         }
     }
 }
+

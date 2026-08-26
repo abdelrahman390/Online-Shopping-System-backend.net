@@ -18,7 +18,7 @@ namespace Online_Shopping_System.Services
             _context = context;
         }
 
-        public async Task<byte[]> GenerateOrdersExcelAsync()
+        public virtual async Task<byte[]> GenerateOrdersExcelAsync()
         {
             var orders = await _context.Orders
                 .Include(o => o.Cart)
@@ -70,7 +70,7 @@ namespace Online_Shopping_System.Services
             return stream.ToArray();
         }
 
-        public async Task<byte[]> GenerateOrdersPdfAsync()
+        public virtual async Task<byte[]> GenerateOrdersPdfAsync()
         {
             var orders = await _context.Orders
                 .Include(o => o.Cart)
@@ -247,7 +247,6 @@ namespace Online_Shopping_System.Services
                     .AlignMiddle();
             }
         }
-
 
     }
 }

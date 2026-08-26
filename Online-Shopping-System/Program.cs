@@ -4,8 +4,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Online_Shopping_System.Data;
 using Online_Shopping_System.Services;
-using System.Text;
 using QuestPDF.Infrastructure;
+using System.Diagnostics;
+using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -93,6 +94,25 @@ QuestPDF.Settings.License = LicenseType.Community;
 
 var app = builder.Build();
 
+
+app.Use(async (context, next) =>
+{
+    var sw = Stopwatch.StartNew();
+    try
+    {
+        await next();
+    }
+    finally
+    {
+        sw.Stop();
+        app.Logger.LogInformation("{Method} {Path} responded {StatusCode} in {Elapsed} ms",
+            context.Request.Method,
+            context.Request.Path,
+            context.Response.StatusCode,
+            sw.ElapsedMilliseconds);
+    }
+});
+
 app.UseCors("ReactPolicy");
 
 if (args.Contains("seed"))
@@ -119,6 +139,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

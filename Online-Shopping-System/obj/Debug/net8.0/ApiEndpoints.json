@@ -115,8 +115,8 @@
   },
   {
     "ContainingType": "Online_Shopping_System.Controllers.ProductsController",
-    "Method": "getProducts",
-    "RelativePath": "Products/getProducts",
+    "Method": "GetAllProducts",
+    "RelativePath": "Products",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -124,10 +124,26 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Online_Shopping_System.Controllers.ProductsController",
+    "Method": "AddProduct",
+    "RelativePath": "Products/addProduct",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Online_Shopping_System.Models.Products.AddProductRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "market_watch.Controllers.RegisterController",
     "Method": "login",
     "RelativePath": "Register/login",
-    "HttpMethod": "GET",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -148,7 +164,7 @@
     "ContainingType": "market_watch.Controllers.RegisterController",
     "Method": "register",
     "RelativePath": "Register/register",
-    "HttpMethod": "GET",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [

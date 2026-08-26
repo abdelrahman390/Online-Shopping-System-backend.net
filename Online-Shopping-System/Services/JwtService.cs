@@ -6,7 +6,7 @@ using Online_Shopping_System.Models.Users;
 
 namespace Online_Shopping_System.Services
 {
-    public class JwtService
+    public  class JwtService
     {
         private readonly IConfiguration _configuration;
 
@@ -15,7 +15,7 @@ namespace Online_Shopping_System.Services
             _configuration = configuration;
         }
 
-        public string GenerateToken(User user)
+        public virtual string GenerateToken(User user)
         {
             var claims = new[]
             {
@@ -47,5 +47,6 @@ namespace Online_Shopping_System.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }

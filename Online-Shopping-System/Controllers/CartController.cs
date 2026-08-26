@@ -5,12 +5,12 @@ using Online_Shopping_System.Models.Products;
 using Online_Shopping_System.Data;
 using System.Security.Claims;
 using System.Data;
+using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore.Infrastructure;
 //using System.ComponentModel.Design;
 //using System.Linq;
 //using System.Net;
 //using Microsoft.Data.SqlClient;
-//using Microsoft.EntityFrameworkCore;
-//using Microsoft.EntityFrameworkCore.Infrastructure;
 //using Online_Shopping_System.Services;
 //using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
@@ -52,32 +52,32 @@ namespace Online_Shopping_System.Controllers
                 }
 
                 // --------- FOR PRODUCTION ---------------
-                //var affectedRows = await _dbContext.Products
-                //    .Where(p => p.ProductId == productId && p.Quantity >= quantity)
-                //    .ExecuteUpdateAsync(setters => setters
-                //        .SetProperty(p => p.Quantity, p => p.Quantity - quantity));
+                var affectedRows = await _dbContext.Products
+                    .Where(p => p.ProductId == productId && p.Quantity >= quantity)
+                    .ExecuteUpdateAsync(setters => setters
+                        .SetProperty(p => p.Quantity, p => p.Quantity - quantity));
 
-                //if (affectedRows == 0)
-                //{
-                //    // Product doesn't exist OR insufficient quantity
-                //    return BadRequest("Insufficient product quantity.");
-                //}
+                if (affectedRows == 0)
+                {
+                    // Product doesn't exist OR insufficient quantity
+                    return BadRequest("Insufficient product quantity.");
+                }
 
                 Product product = _dbContext.Products.FirstOrDefault(p => p.ProductId == productId);
 
                 Cart cart = _dbContext.Carts.FirstOrDefault(c => c.UserId == int.Parse(userIdClaim.Value) && c.CartStatus == "Pending");
 
-                if (product == null)
-                {
-                    return NotFound("Product not found.");
-                }
+                //if (product == null)
+                //{
+                //    return NotFound("Product not found.");
+                //}
 
-                if (quantity > product.Quantity)
-                {
-                    Console.WriteLine($"quantity: {quantity}  |  product.Quantity: {product.Quantity}");
-                    return BadRequest("Not enough products in stock.");
-                }
-                product.Quantity -= quantity;
+                //if (quantity > product.Quantity)
+                //{
+                //    Console.WriteLine($"quantity: {quantity}  |  product.Quantity: {product.Quantity}");
+                //    return BadRequest("Not enough products in stock.");
+                //}
+                //product.Quantity -= quantity;
 
                 if (cart == null)
                 {

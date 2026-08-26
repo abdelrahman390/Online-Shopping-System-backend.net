@@ -1,8 +1,9 @@
 ﻿using Konscious.Security.Cryptography;
+using Microsoft.AspNetCore.Mvc;
 using Online_Shopping_System.Data;
 using Online_Shopping_System.Models.Users;
 using Online_Shopping_System.Services;
-using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 //using System.Data;
@@ -65,7 +66,7 @@ namespace market_watch.Controllers
             return new PasswordHashResult(Hash: hash, Salt: salt );
         }
 
-        [HttpGet("register")]
+        [HttpPost("register")]
         public async Task<IActionResult> register(string UserName, string email, string Password, string userRole)
         {
 
@@ -80,7 +81,7 @@ namespace market_watch.Controllers
                 //bool isValidPassword = Password.Length >= 8;
                 bool isValidPassword = true;
 
-                Console.WriteLine($" {isValidRole} - {isUniqueUsername} - {CorrectEmailFormat} - {isValidPassword}");
+                //Console.WriteLine($" {isValidRole} - {isUniqueUsername} - {CorrectEmailFormat} - {isValidPassword}");
 
                 if (!isValidRole && isUniqueUsername && CorrectEmailFormat && isValidPassword)
                 {
@@ -118,16 +119,21 @@ namespace market_watch.Controllers
         }
 
 
-        [HttpGet("login")]
+        [HttpPost("login")]
         public async Task<IActionResult> login(string UserName, string Password)
         {
 
             try
             {
+                var sw = Stopwatch.StartNew();
+
                 var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
                 User? user = _dbContext.Users.FirstOrDefault(u => u.UserName == UserName);
 
-                Console.WriteLine($"Error Top: {user}");
+                Console.WriteLine($"DB query: {sw.ElapsedMilliseconds} ms");
+                sw.Restart();
+
+                //Console.WriteLine($"Error Top: {user}");
                 if (user == null)
                 {
                     return Unauthorized("Invalid username or password.");
@@ -135,17 +141,28 @@ namespace market_watch.Controllers
 
                 byte[] passwordHashResult = await HashPasswordWithSalt(Password, user.PasswordSalt);
 
-                if (!CryptographicOperations.FixedTimeEquals(user.PasswordHashed, passwordHashResult))
+                Console.WriteLine($"Argon2: {sw.ElapsedMilliseconds} ms");
+
+                sw.Restart();
+
+                bool passwordValid = !CryptographicOperations.FixedTimeEquals(user.PasswordHashed, passwordHashResult);
+
+                Console.WriteLine($"Hash comparison: {sw.ElapsedMilliseconds} ms");
+
+                sw.Restart();
+
+                if (passwordValid)
                 {
                     return Unauthorized("Invalid username or password.");
                 }
 
-                Console.WriteLine($"Error Top: {passwordHashResult}");
+                //Console.WriteLine($"Error Top: {passwordHashResult}");
 
                 var token = _jwtService.GenerateToken(
                         user
                     );
 
+                Console.WriteLine($"JWT generation: {sw.ElapsedMilliseconds} ms");
 
                 //_AuditLogsService.Log(user.UserId, "login", "Users", DateTime.Now, userIpAdress);
 

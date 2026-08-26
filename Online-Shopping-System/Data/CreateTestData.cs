@@ -30,18 +30,49 @@ namespace Online_Shopping_System.Data
         // add products
         public void CreateTestProducts()
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 3; i++)
             {
-                Product newProduct = new Product
+                Product newElectronic = new Electronics
                 {
-                    Name = "Product" + i.ToString(),
-                    Price = i * 5 + 2,
-                    Quantity = i * 3,
-                    Type = "Books"
+                    Name = "Electronics-" + i,
+                    Price = 250,
+                    Quantity = 5,
+                    Type = "Electronics",
+                    Warranty = 24
+                };
+                _dbContext.Products.Add(newElectronic);
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                Product newBook = new Books
+                {
+                    Name = "Book-" + i,
+                    Price = 50,
+                    Quantity = 10,
+                    Type = "Books",
+                    Author = "Author-" + 1,
+                    ISBN = "ISBN-" + 1
                 };
 
-                _dbContext.Products.Add(newProduct);
+                _dbContext.Products.Add(newBook);
             }
+
+            for (int i = 0; i < 3; i++)
+            {
+                Product newClothes = new Clothes
+                {
+                    Name = "Clothes-" + i,
+                    Price = 70,
+                    Quantity = 20,
+                    Type = "Clothes",
+                    Size = i+1,
+                    Color = "Color-" + i
+                };
+
+                _dbContext.Products.Add(newClothes);
+            }
+
             _dbContext.SaveChanges();
             Console.WriteLine("Test Products created successfully.");
         }

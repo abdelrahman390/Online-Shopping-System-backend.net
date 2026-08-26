@@ -14,12 +14,16 @@ public class EmailService
         _configuration = configuration;
     }
 
-    public async Task SendEmailAsync(
+    public virtual async Task SendEmailAsync(
         string to,
         string subject,
         string message)
     {
         var apiToken = _configuration["Mailtrap:ApiToken"];
+
+        Console.WriteLine($"Token exists: {!string.IsNullOrEmpty(apiToken)}");
+        Console.WriteLine($"Token length: {apiToken?.Length}");
+        Console.WriteLine($"Token starts with: {apiToken?[..Math.Min(5, apiToken.Length)]}");
 
         _httpClient.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", apiToken);

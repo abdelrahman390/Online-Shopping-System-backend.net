@@ -1,248 +1,168 @@
-﻿
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Moq;
 using Online_Shopping_System.Controllers;
-using Online_Shopping_System.Data;
-using Online_Shopping_System.Models.Carts;
 using Online_Shopping_System.Models.Products;
-using Online_Shopping_System.Models.Shipping;
+using Online_Shopping_System.Models.Users;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
-namespace Online_Shopping_SystemTests.Controllers
+namespace Online_Shopping_System.Tests
 {
-    public class CartControllerTests
+    // NOTE: SqliteContextFixture is created fresh per test (xUnit makes a new
+    // test class instance per [Fact]), so there's no cross-test state leak.
+    public class CartControllerTests : IDisposable
     {
-        private OnlineShoppingContext CreateContext()
-        {
-            var options = new DbContextOptionsBuilder<OnlineShoppingContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
+        private readonly SqliteContextFixture _db;
+        private readonly CartController _controller;
 
-            return new OnlineShoppingContext(options);
+        public CartControllerTests()
+        {
+            _db = new SqliteContextFixture();
+
+            var configMock = new Mock<IConfiguration>();
+            _controller = new CartController(configMock.Object, _db.Context);
         }
 
-        private CartController CreateController(OnlineShoppingContext context)
+        public void Dispose() => _db.Dispose();
+
+        private async Task<int> SeedUserAsync(int userId, string role)
         {
-            return new CartController(null!, context);
-        }
+            var userType = new UserType {}; // adjust to your real UserType shape
+            _db.Context.UserTypes.Add(userType);
+            await _db.Context.SaveChangesAsync();
 
-
-        // =========================
-        // Add to cart
-        // =========================
-
-        [Fact]
-        public async Task addToCart_ProductNotFound_ReturnsNotFound()
-        {
-            using var context = CreateContext();
-            var controller = CreateController(context);
-
-            var result = await controller.AddToCart(1, 1);
-
-            //var objectResult = Assert.IsType<ObjectResult>(result);
-
-            //Console.WriteLine($"Status: {objectResult.StatusCode}");
-            //Console.WriteLine($"Error: {objectResult.Value}");
-
-            var NotFound = Assert.IsType<NotFoundObjectResult>(result);
-
-            Assert.Contains(
-                "Product not found.",
-                NotFound.Value?.ToString());
-        }
-
-        [Fact]
-        public async Task addToCart_QuantityMustBeGreaterThanZero_ReturnsBadRequest()
-        {
-            // Arrange
-            using var context = CreateContext();
-            var controller = CreateController(context);
-
-            context.Products.Add(new Product
+            var user = new User
             {
-                //ProductId = 1,
-                Name = "Test Product",
-                Price = 10,
-                Quantity = 10,
-                Type = "Test"
-            });
-            context.SaveChanges();
-
-            var product = context.Products.FirstOrDefault(p => p.ProductId == 1);
-
-            Assert.NotNull(product);
-            Assert.Equal(1, product.ProductId);
-
-            // Act
-            var result = await controller.AddToCart(0, 1);
-
-            // Assert
-            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
-
-            Console.WriteLine($"Test: {result}");
-            Console.WriteLine($"Test: {badRequest}");
-
-            Assert.Contains("Quantity must be greater than 0", badRequest.Value?.ToString());
-        }
-
-        [Fact]
-        public async Task addToCart_NotEnoughProductsInStock_ReturnsBadRequest()
-        {
-            // Arrange
-            using var context = CreateContext();
-            var controller = CreateController(context);
-
-
-            context.Products.Add(new Product
-            {
-                Name = "Test Product",
-                Price = 10,
-                Quantity = 3,
-                Type = "Test"
-            });
-            context.SaveChanges();
-
-            // Act
-            var result = await controller.AddToCart(4, 1);
-
-            // Assert
-            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
-
-            Assert.Contains("Not enough products in stock", badRequest.Value?.ToString());
-        }
-
-        [Fact]
-        public async Task addToCart_AddAllStockToCart_ReturnsBadRequest()
-        {
-            // Arrange
-            using var context = CreateContext();
-            var controller = CreateController(context);
-
-
-            context.Products.Add(new Product
-            {
-                Name = "Test Product",
-                Price = 10,
-                Quantity = 3,
-                Type = "Test"
-            });
-            context.SaveChanges();
-
-            // Act
-            var result = await controller.AddToCart(1, 1);
-
-            // Assert
-            var goodRequest = Assert.IsType<OkObjectResult>(result);
-
-            Assert.Contains("is now added to cart", goodRequest.Value?.ToString());
-        }
-
-        [Fact]
-        public async Task addToCart_AddLessThanQuntityThanAllStockToCart_ReturnsBadRequest()
-        {
-            // Arrange
-            using var context = CreateContext();
-            var controller = CreateController(context);
-
-
-            context.Products.Add(new Product
-            {
-                Name = "Test Product",
-                Price = 10,
-                Quantity = 3,
-                Type = "Test"
-            });
-            context.SaveChanges();
-
-            // Act
-            var result = await controller.AddToCart(1, 1);
-
-            // Assert
-            var goodRequest = Assert.IsType<OkObjectResult>(result);
-
-            Assert.Contains("is now added to cart", goodRequest.Value?.ToString());
-        }
-
-        [Fact]
-        public async Task previewCart_getEmptyUserCart_ReturnsOk()
-        {
-            // Arrange
-            using var context = CreateContext();
-            var controller = CreateController(context);
-
-            // Act
-            var result =  controller.PreviewCart();
-
-            // Assert
-            var goodRequest = Assert.IsType<OkObjectResult>(result);
-
-            Assert.Contains([], goodRequest.Value?.ToString());
-        }
-
-        [Fact]
-        public async Task previewCart_getUserCart_ReturnsOk()
-        {
-            // Arrange
-            using var context = CreateContext();
-            var controller = CreateController(context);
-
-            context.Carts.Add(new Cart
-            {
-                //CartId = 1,
-                UserId = 1,
-                TotalPrice = 100,
-                CreatedAt = DateTimeOffset.Now,
-                CartStatus = "Pending"
-            });
-            context.SaveChanges();
-
-            var product = new Product
-            {
-                Name = "Test Product",
-                Price = 10,
-                Quantity = 10,
-                Type = "Test"
+                UserId = userId,
+                UserName = $"testuser{userId}",
+                Email = $"testuser{userId}@example.com",
+                PasswordHashed = new byte[] { 1, 2, 3 },
+                PasswordSalt = new byte[] { 4, 5, 6 },
+                UserRole = role,
+                UserTypeId = userType.UserTypeId
             };
+            _db.Context.Users.Add(user);
+            await _db.Context.SaveChangesAsync();
 
-            context.Products.Add(product);
-            context.SaveChanges();
-
-            context.CartItems.Add(new CartItem
-            {
-                CartId = 1,
-                ProductId = 1,
-                Quantity = 2,
-                TotalPrice = 20
-            });
-            context.SaveChanges();
-
-            //var cartItems = context.CartItems.ToList();
-            //foreach (var cartItem in cartItems)
-            //{
-            //    Console.WriteLine($"CartItemId: {cartItem.CartItemId}, ProductId: {cartItem.ProductId}, Quantity: {cartItem.Quantity}, TotalPrice: {cartItem.TotalPrice}");
-            //}
-
-            //var carts = context.Carts.ToList();
-            //foreach (var cart in carts)
-            //{
-            //    Console.WriteLine($"UserId: {cart.UserId}, UserId: {cart.UserId}, CartStatus: {cart.CartStatus}.");
-            //}
-            //Console.WriteLine($"previewCart_getUserCart_ReturnsOk: {cartItems.Count()}");
-
-            // Act
-            var result = controller.PreviewCart();
-
-            // Assert
-            var goodRequest = Assert.IsType<OkObjectResult>(result);
-
-            var items = Assert.IsAssignableFrom<System.Collections.IEnumerable>(
-                goodRequest.Value);
-
-            Assert.Single(items.Cast<object>());
+            return user.UserId;
         }
 
 
+        [Fact]
+        public async Task AddToCart_ReturnsUnauthorized_WhenClaimsMissing()
+        {
+            _controller.WithNoAuthClaims();
 
+            var result = await _controller.AddToCart(productId: 1, quantity: 1);
+
+            var unauthorized = Assert.IsType<UnauthorizedObjectResult>(result);
+            Assert.Equal("Missing data in the token.", unauthorized.Value);
+        }
+
+        [Fact]
+        public async Task AddToCart_ReturnsBadRequest_WhenQuantityIsZeroOrLess()
+        {
+            _controller.AuthenticateAs(userId: 1, role: "User");
+
+            var result = await _controller.AddToCart(productId: 1, quantity: 0);
+
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Quantity must be greater than 0.", badRequest.Value);
+        }
+
+        [Fact]
+        public async Task AddToCart_ReturnsBadRequest_WhenStockIsInsufficient()
+        {
+            // Adjust these property names to match your real Product subclass.
+            _db.Context.Products.Add(new Electronics
+            {
+                Name = "Headphones",
+                Price = 100,
+                Quantity = 2,
+                Type = "Electronics",
+                Warranty = 12
+            });
+            await _db.Context.SaveChangesAsync();
+            var productId = _db.Context.Products.First().ProductId;
+
+            _controller.AuthenticateAs(userId: 1, role: "User");
+
+            var result = await _controller.AddToCart(productId, quantity: 5);
+
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Insufficient product quantity.", badRequest.Value);
+        }
+
+        [Fact]
+        public async Task AddToCart_CreatesCartAndItem_AndDecrementsStock_WhenValid()
+        {
+            _db.Context.Products.Add(new Electronics
+            {
+                Name = "Headphones",
+                Price = 100,
+                Quantity = 5,
+                Type = "Electronics",
+                Warranty = 12
+            });
+            await _db.Context.SaveChangesAsync();
+            var productId = _db.Context.Products.First().ProductId;
+
+            await SeedUserAsync(userId: 1, role: "User");
+
+            _controller.AuthenticateAs(userId: 1, role: "User");
+
+            var result = await _controller.AddToCart(productId, quantity: 2);
+
+            if (result is ObjectResult obj && obj.StatusCode == 500)
+            {
+                Assert.Fail($"Controller returned 500: {obj.Value}");
+            }
+
+            Assert.IsType<OkObjectResult>(result);
+
+            //var product = _db.Context.Products.First(p => p.ProductId == productId);
+            var product = await _db.Context.Products
+                .AsNoTracking()
+                .FirstAsync(p => p.ProductId == productId);
+
+            Assert.Equal(3, product.Quantity); // 5 - 2
+
+            var cart = _db.Context.Carts.Single(c => c.UserId == 1 && c.CartStatus == "Pending");
+            Assert.Equal(200, cart.TotalPrice); // 100 * 2
+
+            var item = _db.Context.CartItems.Single(i => i.CartId == cart.CartId);
+            Assert.Equal(2, item.Quantity);
+        }
+
+        [Fact]
+        public async Task AddToCart_IncrementsExistingItem_WhenCalledTwiceForSameProduct()
+        {
+            _db.Context.Products.Add(new Electronics
+            {
+                Name = "Headphones",
+                Price = 50,
+                Quantity = 10,
+                Type = "Electronics",
+                Warranty = 12
+            });
+            await _db.Context.SaveChangesAsync();
+            var productId = _db.Context.Products.First().ProductId;
+
+            await SeedUserAsync(userId: 1, role: "User");
+
+            _controller.AuthenticateAs(userId: 1, role: "User");
+
+            await _controller.AddToCart(productId, quantity: 1);
+            await _controller.AddToCart(productId, quantity: 2);
+
+            var cart = _db.Context.Carts.Single(c => c.UserId == 1 && c.CartStatus == "Pending");
+            var item = _db.Context.CartItems.Single(i => i.CartId == cart.CartId);
+
+            Assert.Equal(3, item.Quantity);
+        }
     }
 }

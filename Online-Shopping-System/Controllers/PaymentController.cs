@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
+using Online_Shopping_System.Data;
 using Online_Shopping_System.Models.Carts;
 using Online_Shopping_System.Models.Orders;
 using Online_Shopping_System.Models.Payment;
 using Online_Shopping_System.Models.Users;
-using Online_Shopping_System.Data;
 using System.Security.Claims;
 //using System.ComponentModel.Design;
 //using System.Data;
@@ -37,6 +38,7 @@ namespace Online_Shopping_System.Controllers
         [HttpPost("cashPay")]
         public async Task<IActionResult> CashPay()
         {
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -85,18 +87,21 @@ namespace Online_Shopping_System.Controllers
 
                 User user = _dbContext.Users.FirstOrDefault(u => u.UserId == int.Parse(userIdClaim.Value));
 
-                //await _emailService.SendEmailAsync(
-                //        user.Email,
-                //        "Order Confirmation.",
-                //        "Hello from Online-Shopping-System, your order has benn confirmed."
-                //    );
+                await _emailService.SendEmailAsync(
+                        "abdelrahmanbo390@gmail.com",
+                        "Order Confirmation.",
+                        "Hello from Online-Shopping-System, your order has benn confirmed."
+                    );
 
+                await transaction.CommitAsync();
                 return Ok(
                     $"OrderId: {order.OrderId} is now Paid and confirmed."
                 );
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync();
+
                 Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,
@@ -157,12 +162,15 @@ namespace Online_Shopping_System.Controllers
 
                 Console.WriteLine($"Test: {cardNumber}");
 
-                //await _emailService.SendEmailAsync(
-                //    user.Email,
-                //    "Order Confirmation.",
-                //    "Hello from Online-Shopping-System, your order has benn confirmed."
-                //);
-                Console.WriteLine($"Test Down: {cardNumber}");
+                Console.WriteLine("Before sending email");
+
+                await _emailService.SendEmailAsync(
+                    "abdelrahmanbo390@gmail.com",
+                    "Order Confirmation.",
+                    "Hello from Online-Shopping-System, your order has benn confirmed."
+                );
+
+                Console.WriteLine("After sending email");
 
                 await transaction.CommitAsync();
 
@@ -236,11 +244,11 @@ namespace Online_Shopping_System.Controllers
 
                 User user = _dbContext.Users.FirstOrDefault(u => u.UserId == int.Parse(userIdClaim.Value));
 
-                //await _emailService.SendEmailAsync(
-                //    user.Email,
-                //    "Order Confirmation.",
-                //    "Hello from Online-Shopping-System, your order has benn confirmed."
-                //);
+                await _emailService.SendEmailAsync(
+                    "abdelrahmanbo390@gmail.com",
+                    "Order Confirmation.",
+                    "Hello from Online-Shopping-System, your order has benn confirmed."
+                );
 
                 await transaction.CommitAsync();
 
