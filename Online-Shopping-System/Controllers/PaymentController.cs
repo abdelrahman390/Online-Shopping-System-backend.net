@@ -38,7 +38,11 @@ namespace Online_Shopping_System.Controllers
         [HttpPost("cashPay")]
         public async Task<IActionResult> CashPay()
         {
-            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            /*
+             info: Online-Shopping-System[0]
+             POST /Order/confirmOrder responded 200 in 171 ms
+             */
+            using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -93,14 +97,14 @@ namespace Online_Shopping_System.Controllers
                         "Hello from Online-Shopping-System, your order has benn confirmed."
                     );
 
-                await transaction.CommitAsync();
+                transaction.CommitAsync();
                 return Ok(
                     $"OrderId: {order.OrderId} is now Paid and confirmed."
                 );
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
+                transaction.RollbackAsync();
 
                 Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
@@ -114,7 +118,7 @@ namespace Online_Shopping_System.Controllers
         [HttpPost("creditCardPay")]
         public async Task<IActionResult> CreditCardPay(string cardNumber)
         {
-            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -172,7 +176,7 @@ namespace Online_Shopping_System.Controllers
 
                 Console.WriteLine("After sending email");
 
-                await transaction.CommitAsync();
+                transaction.CommitAsync();
 
                 return Ok(
                     $"OrderId: {order.OrderId} is now Paid and confirmed."
@@ -180,7 +184,7 @@ namespace Online_Shopping_System.Controllers
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
+                transaction.RollbackAsync();
 
                 Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
@@ -194,7 +198,7 @@ namespace Online_Shopping_System.Controllers
         [HttpPost("WalletPay")]
         public async Task<IActionResult> WalletPay(string WalletNumber, string WalletProviderName)
         {
-            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -250,7 +254,7 @@ namespace Online_Shopping_System.Controllers
                     "Hello from Online-Shopping-System, your order has benn confirmed."
                 );
 
-                await transaction.CommitAsync();
+                transaction.Commit();
 
                 return Ok(
                     $"OrderId: {order.OrderId} is now Paid and confirmed."
@@ -259,7 +263,7 @@ namespace Online_Shopping_System.Controllers
             catch (Exception ex)
             {
 
-                await transaction.RollbackAsync();
+                 transaction.RollbackAsync();
                 Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,

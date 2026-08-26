@@ -3,16 +3,20 @@
   "WorkspaceRootPath": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|e:\\programming\\internsheps\\fra 2026\\projs\\online shopping system\\backend\\online-shopping-system-backend.net\\online-shopping-system\\controllers\\paymentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|solutionrelative:online-shopping-system\\controllers\\paymentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|e:\\programming\\internsheps\\fra 2026\\projs\\online shopping system\\backend\\online-shopping-system-backend.net\\online-shopping-system\\commands\\all controllers.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|solutionrelative:online-shopping-system\\commands\\all controllers.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|e:\\programming\\internsheps\\fra 2026\\projs\\online shopping system\\backend\\online-shopping-system-backend.net\\online-shopping-system\\controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|solutionrelative:online-shopping-system\\controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|e:\\programming\\internsheps\\fra 2026\\projs\\online shopping system\\backend\\online-shopping-system-backend.net\\online-shopping-system\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|solutionrelative:online-shopping-system\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|e:\\programming\\internsheps\\fra 2026\\projs\\online shopping system\\backend\\online-shopping-system-backend.net\\online-shopping-system\\controllers\\shippingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|solutionrelative:online-shopping-system\\controllers\\shippingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|e:\\programming\\internsheps\\fra 2026\\projs\\online shopping system\\backend\\online-shopping-system-backend.net\\online-shopping-system\\controllers\\reportscontroller .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|solutionrelative:online-shopping-system\\controllers\\reportscontroller .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|e:\\programming\\internsheps\\fra 2026\\projs\\online shopping system\\backend\\online-shopping-system-backend.net\\online-shopping-system\\controllers\\registercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -21,6 +25,18 @@
     {
       "AbsoluteMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|e:\\programming\\internsheps\\fra 2026\\projs\\online shopping system\\backend\\online-shopping-system-backend.net\\online-shopping-system\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|solutionrelative:online-shopping-system\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|e:\\programming\\internsheps\\fra 2026\\projs\\online shopping system\\backend\\online-shopping-system-backend.net\\online-shopping-system\\controllers\\paymentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|solutionrelative:online-shopping-system\\controllers\\paymentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|e:\\programming\\internsheps\\fra 2026\\projs\\online shopping system\\backend\\online-shopping-system-backend.net\\online-shopping-system\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|solutionrelative:online-shopping-system\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|e:\\programming\\internsheps\\fra 2026\\projs\\online shopping system\\backend\\online-shopping-system-backend.net\\online-shopping-system\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|solutionrelative:online-shopping-system\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|e:\\programming\\internsheps\\fra 2026\\projs\\online shopping system\\backend\\online-shopping-system-backend.net\\online-shopping-system\\models\\reports\\excelreportgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -99,10 +115,6 @@
       "RelativeMoniker": "D:0:0:{F5FC59E5-F264-4338-93F0-090899BE5AF0}|Online-Shopping-SystemTests\\Online-Shopping-SystemTests.csproj|solutionrelative:online-shopping-systemtests\\unit testing\\models\\payments\\cashpaymenttest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|e:\\programming\\internsheps\\fra 2026\\projs\\online shopping system\\backend\\online-shopping-system-backend.net\\online-shopping-system\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|solutionrelative:online-shopping-system\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|e:\\programming\\internsheps\\fra 2026\\projs\\online shopping system\\backend\\online-shopping-system-backend.net\\online-shopping-system\\models\\users\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C5C7C083-3F91-4584-B797-E0121D3F1DC9}|Online-Shopping-System\\Online-Shopping-System.csproj|solutionrelative:online-shopping-system\\models\\users\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -114,7 +126,7 @@
       "DocumentGroups": [
         {
           "DockedHeight": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 11,
           "Children": [
             {
               "$type": "Bookmark",
@@ -142,32 +154,119 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ProductsController.cs",
+              "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\ProductsController.cs",
+              "RelativeDocumentMoniker": "Online-Shopping-System\\Controllers\\ProductsController.cs",
+              "ToolTip": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\ProductsController.cs",
+              "RelativeToolTip": "Online-Shopping-System\\Controllers\\ProductsController.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAADwv94AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-26T07:25:42.812Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "RegisterController.cs",
+              "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\RegisterController.cs",
+              "RelativeDocumentMoniker": "Online-Shopping-System\\Controllers\\RegisterController.cs",
+              "ToolTip": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\RegisterController.cs",
+              "RelativeToolTip": "Online-Shopping-System\\Controllers\\RegisterController.cs",
+              "ViewState": "AgIAAJUAAAAAAAAAAAAAAI0AAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-26T10:12:06.32Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ReportsController .cs",
+              "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\ReportsController .cs",
+              "RelativeDocumentMoniker": "Online-Shopping-System\\Controllers\\ReportsController .cs",
+              "ToolTip": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\ReportsController .cs",
+              "RelativeToolTip": "Online-Shopping-System\\Controllers\\ReportsController .cs",
+              "ViewState": "AgIAACUAAAAAAAAAAAAqwDoAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-26T21:05:24.97Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ShippingController.cs",
+              "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\ShippingController.cs",
+              "RelativeDocumentMoniker": "Online-Shopping-System\\Controllers\\ShippingController.cs",
+              "ToolTip": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\ShippingController.cs",
+              "RelativeToolTip": "Online-Shopping-System\\Controllers\\ShippingController.cs",
+              "ViewState": "AgIAACoAAAAAAAAAAAAAAD4AAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-26T21:05:34.257Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CartController.cs",
+              "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\CartController.cs",
+              "RelativeDocumentMoniker": "Online-Shopping-System\\Controllers\\CartController.cs",
+              "ToolTip": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\CartController.cs",
+              "RelativeToolTip": "Online-Shopping-System\\Controllers\\CartController.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAADwvysAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-25T20:06:49.698Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "All controllers.txt",
+              "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Commands\\All controllers.txt",
+              "RelativeDocumentMoniker": "Online-Shopping-System\\Commands\\All controllers.txt",
+              "ToolTip": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Commands\\All controllers.txt",
+              "RelativeToolTip": "Online-Shopping-System\\Commands\\All controllers.txt",
+              "ViewState": "AgIAAB0AAAAAAAAAAAAIwC0AAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2026-08-26T21:04:21.574Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "PaymentController.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\PaymentController.cs",
               "RelativeDocumentMoniker": "Online-Shopping-System\\Controllers\\PaymentController.cs",
               "ToolTip": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\PaymentController.cs",
               "RelativeToolTip": "Online-Shopping-System\\Controllers\\PaymentController.cs",
-              "ViewState": "AgIAADYAAAAAAAAAAAAowFoAAAA1AAAAAAAAAA==",
+              "ViewState": "AgIAAPwAAAAAAAAAAAAAAAkBAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-08-26T10:53:57.756Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "RegisterController.cs",
-              "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\RegisterController.cs",
-              "RelativeDocumentMoniker": "Online-Shopping-System\\Controllers\\RegisterController.cs",
-              "ToolTip": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\RegisterController.cs",
-              "RelativeToolTip": "Online-Shopping-System\\Controllers\\RegisterController.cs",
-              "ViewState": "AgIAAEUAAAAAAAAAAAA0wIMAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 7,
+              "Title": "OrderController.cs",
+              "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\OrderController.cs",
+              "RelativeDocumentMoniker": "Online-Shopping-System\\Controllers\\OrderController.cs",
+              "ToolTip": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\OrderController.cs",
+              "RelativeToolTip": "Online-Shopping-System\\Controllers\\OrderController.cs",
+              "ViewState": "AgIAAJUAAAAAAAAAAAAIwGIAAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-26T10:12:06.32Z"
+              "WhenOpened": "2026-08-25T21:25:21.087Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 11,
+              "Title": "PdfReportGenerator.cs",
+              "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Models\\Reports\\PdfReportGenerator.cs",
+              "RelativeDocumentMoniker": "Online-Shopping-System\\Models\\Reports\\PdfReportGenerator.cs",
+              "ToolTip": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Models\\Reports\\PdfReportGenerator.cs",
+              "RelativeToolTip": "Online-Shopping-System\\Models\\Reports\\PdfReportGenerator.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-26T07:14:45.959Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "Program.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Program.cs",
               "RelativeDocumentMoniker": "Online-Shopping-System\\Program.cs",
@@ -180,44 +279,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "ProductsController.cs",
-              "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\ProductsController.cs",
-              "RelativeDocumentMoniker": "Online-Shopping-System\\Controllers\\ProductsController.cs",
-              "ToolTip": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\ProductsController.cs",
-              "RelativeToolTip": "Online-Shopping-System\\Controllers\\ProductsController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAALMAAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-26T07:25:42.812Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "CartController.cs",
-              "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\CartController.cs",
-              "RelativeDocumentMoniker": "Online-Shopping-System\\Controllers\\CartController.cs",
-              "ToolTip": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\CartController.cs",
-              "RelativeToolTip": "Online-Shopping-System\\Controllers\\CartController.cs",
-              "ViewState": "AgIAAD0AAAAAAAAAAAAewDwAAAARAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-25T20:06:49.698Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "PdfReportGenerator.cs",
-              "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Models\\Reports\\PdfReportGenerator.cs",
-              "RelativeDocumentMoniker": "Online-Shopping-System\\Models\\Reports\\PdfReportGenerator.cs",
-              "ToolTip": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Models\\Reports\\PdfReportGenerator.cs",
-              "RelativeToolTip": "Online-Shopping-System\\Models\\Reports\\PdfReportGenerator.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-26T07:14:45.959Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 10,
               "Title": "IReportGenerator.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Models\\Reports\\IReportGenerator.cs",
               "RelativeDocumentMoniker": "Online-Shopping-System\\Models\\Reports\\IReportGenerator.cs",
@@ -229,7 +291,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 9,
               "Title": "ExcelReportGenerator.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Models\\Reports\\ExcelReportGenerator.cs",
               "RelativeDocumentMoniker": "Online-Shopping-System\\Models\\Reports\\ExcelReportGenerator.cs",
@@ -241,7 +303,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 12,
               "Title": "AddProductRequest.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Models\\Products\\AddProductRequest.cs",
               "RelativeDocumentMoniker": "Online-Shopping-System\\Models\\Products\\AddProductRequest.cs",
@@ -253,7 +315,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 13,
               "Title": "Order.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Models\\Orders\\Order.cs",
               "RelativeDocumentMoniker": "Online-Shopping-System\\Models\\Orders\\Order.cs",
@@ -265,7 +327,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 14,
               "Title": "EmailNotification.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Models\\Notifications\\EmailNotification.cs",
               "RelativeDocumentMoniker": "Online-Shopping-System\\Models\\Notifications\\EmailNotification.cs",
@@ -277,7 +339,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 17,
               "Title": "To-Do.txt",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Commands\\To-Do.txt",
               "RelativeDocumentMoniker": "Online-Shopping-System\\Commands\\To-Do.txt",
@@ -289,7 +351,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 16,
               "Title": "INotification.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Models\\Notifications\\INotification.cs",
               "RelativeDocumentMoniker": "Online-Shopping-System\\Models\\Notifications\\INotification.cs",
@@ -301,7 +363,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 15,
               "Title": "SMSNotification.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Models\\Notifications\\SMSNotification.cs",
               "RelativeDocumentMoniker": "Online-Shopping-System\\Models\\Notifications\\SMSNotification.cs",
@@ -313,7 +375,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 18,
               "Title": "Cart.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Models\\Carts\\Cart.cs",
               "RelativeDocumentMoniker": "Online-Shopping-System\\Models\\Carts\\Cart.cs",
@@ -325,7 +387,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 20,
               "Title": "UserTypeTests.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-SystemTests\\Unit testing\\Models\\Users\\UserTypeTests.cs",
               "RelativeDocumentMoniker": "Online-Shopping-SystemTests\\Unit testing\\Models\\Users\\UserTypeTests.cs",
@@ -337,7 +399,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 21,
               "Title": "Payment.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Models\\Payments\\Payment.cs",
               "RelativeDocumentMoniker": "Online-Shopping-System\\Models\\Payments\\Payment.cs",
@@ -349,7 +411,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 24,
               "Title": "CreditCardPayment.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Models\\Payments\\CreditCardPayment.cs",
               "RelativeDocumentMoniker": "Online-Shopping-System\\Models\\Payments\\CreditCardPayment.cs",
@@ -361,7 +423,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 23,
               "Title": "CreditCardPaymentTests.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-SystemTests\\Unit testing\\Models\\Payments\\CreditCardPaymentTests.cs",
               "RelativeDocumentMoniker": "Online-Shopping-SystemTests\\Unit testing\\Models\\Payments\\CreditCardPaymentTests.cs",
@@ -373,7 +435,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 22,
               "Title": "WalletPaymentTests.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-SystemTests\\Unit testing\\Models\\Payments\\WalletPaymentTests.cs",
               "RelativeDocumentMoniker": "Online-Shopping-SystemTests\\Unit testing\\Models\\Payments\\WalletPaymentTests.cs",
@@ -385,7 +447,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 19,
               "Title": "EmailServiceTests.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-SystemTests\\Services\\EmailServiceTests.cs",
               "RelativeDocumentMoniker": "Online-Shopping-SystemTests\\Services\\EmailServiceTests.cs",
@@ -393,11 +455,12 @@
               "RelativeToolTip": "Online-Shopping-SystemTests\\Services\\EmailServiceTests.cs",
               "ViewState": "AgIAACgAAAAAAAAAAAAgwA0AAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-25T20:53:53.224Z"
+              "WhenOpened": "2026-08-25T20:53:53.224Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 25,
               "Title": "WalletPayment.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Models\\Payments\\WalletPayment.cs",
               "RelativeDocumentMoniker": "Online-Shopping-System\\Models\\Payments\\WalletPayment.cs",
@@ -409,7 +472,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 26,
               "Title": "CashPayment.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Models\\Payments\\CashPayment.cs",
               "RelativeDocumentMoniker": "Online-Shopping-System\\Models\\Payments\\CashPayment.cs",
@@ -421,7 +484,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 27,
               "Title": "CashPaymentTest.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-SystemTests\\Unit testing\\Models\\Payments\\CashPaymentTest.cs",
               "RelativeDocumentMoniker": "Online-Shopping-SystemTests\\Unit testing\\Models\\Payments\\CashPaymentTest.cs",
@@ -433,19 +496,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "OrderController.cs",
-              "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\OrderController.cs",
-              "RelativeDocumentMoniker": "Online-Shopping-System\\Controllers\\OrderController.cs",
-              "ToolTip": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Controllers\\OrderController.cs",
-              "RelativeToolTip": "Online-Shopping-System\\Controllers\\OrderController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAD4AAAAUAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-25T21:25:21.087Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 28,
               "Title": "User.cs",
               "DocumentMoniker": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-System\\Models\\Users\\User.cs",
               "RelativeDocumentMoniker": "Online-Shopping-System\\Models\\Users\\User.cs",

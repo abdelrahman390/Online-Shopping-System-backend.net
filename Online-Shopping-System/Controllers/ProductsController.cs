@@ -65,6 +65,7 @@ namespace Online_Shopping_System.Controllers
         //    }
         //}
 
+
         [Authorize(Roles = "Admin")]
         [HttpPost("addProduct")]
         public async Task<IActionResult> AddProduct(
@@ -162,7 +163,7 @@ namespace Online_Shopping_System.Controllers
 
                 _dbContext.Products.Add(newProduct);
 
-                await _dbContext.SaveChangesAsync();
+                _dbContext.SaveChangesAsync();
 
                 return Ok(new
                 {
@@ -185,8 +186,8 @@ namespace Online_Shopping_System.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
-            var products = await _dbContext.Products
-                .ToListAsync();
+            var products =  _dbContext.Products
+                .ToList();
 
             var result = products.Select(product => new
             {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Online_Shopping_System.Data;
 using Online_Shopping_System.Models.Carts;
 using Online_Shopping_System.Models.Orders;
@@ -26,23 +27,36 @@ namespace Online_Shopping_System.Controllers
         [HttpPost("confirmOrder")]
         public async Task<IActionResult> ConfirmOrder(int shippingTypeId)
         {
-            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            /*
+             info: Online-Shopping-System[0]
+              POST /Order/confirmOrder responded 200 in 171 ms
+             --
+            info: Online-Shopping-System[0]
+            POST /Order/confirmOrder responded 500 in 392 ms
+
+            ------- after --------
+            info: Online-Shopping-System[0]
+              POST /Order/confirmOrder responded 500 in 541 ms
+
+             */
+            using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
                 var userRoleClaim = User.FindFirst(ClaimTypes.Role);
                 var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                if (userIdClaim == null)
                 {
                     return Unauthorized("Missing data in the token.");
                 }
+                int userId = int.Parse(userIdClaim.Value);
 
-                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.UserId == int.Parse(userIdClaim.Value) && c.CartStatus == "Pending");
+                Cart cart =  _dbContext.Carts.FirstOrDefault(c => c.UserId == userId && c.CartStatus == "Pending");
 
                 if (cart == null)
                 {
-                    return BadRequest($"Cart not found. {int.Parse(userIdClaim.Value)} - {shippingTypeId}");
+                    return BadRequest($"Cart not found. {userId} - {shippingTypeId}");
                 }
 
 
@@ -57,13 +71,13 @@ namespace Online_Shopping_System.Controllers
                 Order order = new Order
                 {
                     CartId = cart.CartId,
-                    UserId = int.Parse(userIdClaim.Value),
+                    UserId = userId,
                     OrderStatus = "Pending",
                     CreatedAt = DateTimeOffset.Now,
                     TotalCost = cart.TotalPrice + ShippingType.ShippingCost
                 };
                 _dbContext.Orders.Add(order);
-                _dbContext.SaveChanges();
+                _dbContext.SaveChangesAsync();
 
                 ShippingRecords newShippingRecord = new ShippingRecords
                 {
@@ -73,16 +87,16 @@ namespace Online_Shopping_System.Controllers
                 };
 
                 _dbContext.ShippingRecords.Add(newShippingRecord);
-                _dbContext.SaveChanges();
+                _dbContext.SaveChangesAsync();
 
-                await transaction.CommitAsync();
+                transaction.CommitAsync();
 
                 return Ok($"Order {order.OrderId} has benn confermed.");
 
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
+                transaction.RollbackAsync();
 
                 Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(

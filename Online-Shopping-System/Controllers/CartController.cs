@@ -34,7 +34,17 @@ namespace Online_Shopping_System.Controllers
         [HttpPost("addToCart")]
         public async Task<IActionResult> AddToCart(int productId, int quantity)
         {
-            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            /*
+             info: Online-Shopping-System[0]
+             POST /Cart/addToCart responded 200 in 728 ms
+            --
+            info: Online-Shopping-System[0]
+            POST /Cart/addToCart responded 200 in 203 ms
+            ---
+            info: Online-Shopping-System[0]
+            POST /Cart/addToCart responded 200 in 82 ms
+             */
+            using var transaction = _dbContext.Database.BeginTransaction();
             try
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -52,9 +62,9 @@ namespace Online_Shopping_System.Controllers
                 }
 
                 // --------- FOR PRODUCTION ---------------
-                var affectedRows = await _dbContext.Products
+                var affectedRows = _dbContext.Products
                     .Where(p => p.ProductId == productId && p.Quantity >= quantity)
-                    .ExecuteUpdateAsync(setters => setters
+                    .ExecuteUpdate(setters => setters
                         .SetProperty(p => p.Quantity, p => p.Quantity - quantity));
 
                 if (affectedRows == 0)
@@ -117,7 +127,7 @@ namespace Online_Shopping_System.Controllers
 
                 _dbContext.SaveChanges();
 
-                await transaction.CommitAsync();
+                transaction.CommitAsync();
 
                 return Ok(
                     $"Product: {product.ProductId} is now added to cart: {cart.CartId} as item: {item.CartItemId}"
@@ -125,7 +135,7 @@ namespace Online_Shopping_System.Controllers
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
+               transaction.RollbackAsync();
 
                 Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(

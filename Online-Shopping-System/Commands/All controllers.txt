@@ -1,0 +1,1202 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using Online_Shopping_System.Data;
+using Online_Shopping_System.Models.Carts;
+using Online_Shopping_System.Models.Orders;
+using Online_Shopping_System.Models.Payment;
+using Online_Shopping_System.Models.Users;
+using System.Security.Claims;
+//using System.ComponentModel.Design;
+//using System.Data;
+//using System.Linq;
+//using System.Net;
+//using Microsoft.Data.SqlClient;
+//using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore.Infrastructure;
+//using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+//using Online_Shopping_System.Services;
+
+
+namespace Online_Shopping_System.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class PaymentController : ControllerBase {
+        private readonly IConfiguration _configuration;
+        private readonly OnlineShoppingContext _dbContext;
+        private readonly EmailService _emailService;
+
+        public PaymentController(IConfiguration configuration, OnlineShoppingContext dbContext, EmailService emailService)
+        {
+            _configuration = configuration;
+            _dbContext = dbContext;
+            _emailService = emailService;
+        }
+
+        [Authorize]
+        [HttpPost("cashPay")]
+        public async Task<IActionResult> CashPay()
+        {
+            /*
+             info: Online-Shopping-System[0]
+             POST /Order/confirmOrder responded 200 in 171 ms
+             */
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                {
+                    return Unauthorized("Missing data in the token.");
+                }
+
+                Order order = _dbContext.Orders.FirstOrDefault(o => o.UserId == int.Parse(userIdClaim.Value) && o.OrderStatus == "Pending");
+
+                if (order == null)
+                {
+                    return BadRequest($"Order not found. {int.Parse(userIdClaim.Value)}");
+                }
+
+                Payment cashpayment = new CashPayment
+                {
+                    PaymentType = "CashPayment",
+                    OrderId = order.OrderId,
+                    Amount = order.TotalCost,
+                    Date = DateTimeOffset.Now
+                };
+
+                if (cashpayment.CollectMoney() == false)
+                {
+                    return BadRequest("Cash Payment data is incorrect.");
+                }
+
+                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.CartId == order.CartId && c.CartStatus == "Pending");
+
+                if(cart == null)
+                {
+                    return BadRequest("Cart not found.");
+                }
+
+                order.OrderStatus = "Confirmed";
+                order.PaymentTypeName = "Cash";
+                cart.CartStatus = "Confirmed";
+
+                _dbContext.Payments.Add(cashpayment);
+
+                _dbContext.SaveChanges();
+
+                User user = _dbContext.Users.FirstOrDefault(u => u.UserId == int.Parse(userIdClaim.Value));
+
+                await _emailService.SendEmailAsync(
+                        "abdelrahmanbo390@gmail.com",
+                        "Order Confirmation.",
+                        "Hello from Online-Shopping-System, your order has benn confirmed."
+                    );
+
+                await transaction.CommitAsync();
+                return Ok(
+                    $"OrderId: {order.OrderId} is now Paid and confirmed."
+                );
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+
+                Console.WriteLine($"Error: {ex.Message}");
+                return StatusCode(
+                    500,
+                    $"Error: {ex.Message}"
+                );
+            }
+        }
+
+        [Authorize]
+        [HttpPost("creditCardPay")]
+        public async Task<IActionResult> CreditCardPay(string cardNumber)
+        {
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                {
+                    return Unauthorized("Missing data in the token.");
+                }
+
+                Order order = _dbContext.Orders.FirstOrDefault(o => o.UserId == int.Parse(userIdClaim.Value) && o.OrderStatus == "Pending");
+
+                if (order == null)
+                {
+                    return BadRequest("Order not found.");
+                }
+
+                Payment creditCardPayment = new CreditCardPayment
+                {
+                    PaymentType = "CreditCard",
+                    CardNumber = cardNumber,
+                };
+
+                if (creditCardPayment.CollectMoney() == false)
+                {
+                    return BadRequest("Credit Card data is incorrect.");
+                }
+
+                creditCardPayment.OrderId = order.OrderId;
+                creditCardPayment.Amount = order.TotalCost;
+                creditCardPayment.Date = DateTimeOffset.Now;
+
+                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.CartId == order.CartId && c.CartStatus == "Pending");
+
+                order.OrderStatus = "Confirmed";
+                order.PaymentTypeName = "CreditCard";
+                cart.CartStatus = "Confirmed";
+
+                _dbContext.Payments.Add(creditCardPayment);
+
+                _dbContext.SaveChanges();
+
+                User user = _dbContext.Users.FirstOrDefault(u => u.UserId == int.Parse(userIdClaim.Value));
+
+                Console.WriteLine($"Test: {cardNumber}");
+
+                Console.WriteLine("Before sending email");
+
+                await _emailService.SendEmailAsync(
+                    "abdelrahmanbo390@gmail.com",
+                    "Order Confirmation.",
+                    "Hello from Online-Shopping-System, your order has benn confirmed."
+                );
+
+                Console.WriteLine("After sending email");
+
+                await transaction.CommitAsync();
+
+                return Ok(
+                    $"OrderId: {order.OrderId} is now Paid and confirmed."
+                );
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+
+                Console.WriteLine($"Error: {ex.Message}");
+                return StatusCode(
+                    500,
+                    $"Error: {ex.Message}"
+                );
+            }
+        }
+
+        [Authorize]
+        [HttpPost("WalletPay")]
+        public async Task<IActionResult> WalletPay(string WalletNumber, string WalletProviderName)
+        {
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                {
+                    return Unauthorized("Missing data in the token.");
+                }
+
+                Order order = _dbContext.Orders.FirstOrDefault(o => o.UserId == int.Parse(userIdClaim.Value) && o.OrderStatus == "Pending");
+
+                if (order == null)
+                {
+                    return BadRequest("Order not found.");
+                }
+
+                Payment walletPayment = new WalletPayment
+                {
+                    PaymentType = "WalletPayment",
+                    WalletProviderName = WalletProviderName,
+                    WalletNumber = WalletNumber
+                };
+
+                if (walletPayment.CollectMoney() == false)
+                {
+                    return BadRequest("Wallet data is incorrect.");
+                }
+
+
+                order.OrderStatus = "Confirmed";
+
+                walletPayment.OrderId = order.OrderId;
+                walletPayment.Amount = order.TotalCost;
+                walletPayment.Date = DateTimeOffset.Now;
+
+                _dbContext.Payments.Add(walletPayment);
+
+                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.CartId == order.CartId && c.CartStatus == "Pending");
+
+                order.OrderStatus = "Confirmed";
+                order.PaymentTypeName = "Wallet";
+                cart.CartStatus = "Confirmed";
+
+                _dbContext.SaveChanges();
+
+                User user = _dbContext.Users.FirstOrDefault(u => u.UserId == int.Parse(userIdClaim.Value));
+
+                await _emailService.SendEmailAsync(
+                    "abdelrahmanbo390@gmail.com",
+                    "Order Confirmation.",
+                    "Hello from Online-Shopping-System, your order has benn confirmed."
+                );
+
+                await transaction.CommitAsync();
+
+                return Ok(
+                    $"OrderId: {order.OrderId} is now Paid and confirmed."
+                );
+            }
+            catch (Exception ex)
+            {
+
+                await transaction.RollbackAsync();
+                Console.WriteLine($"Error: {ex.Message}");
+                return StatusCode(
+                    500,
+                    $"Error: {ex.Message}"
+                );
+            }
+        }
+
+    }
+}
+
+-------------
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Online_Shopping_System.Data;
+using Online_Shopping_System.Models.Products;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.Data.SqlClient;
+//using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore.Infrastructure;
+//using System.ComponentModel.Design;
+//using System.Data;
+//using System.Security.Claims;
+//using Online_Shopping_System.Services;
+//using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+//using System.Net;
+
+
+namespace Online_Shopping_System.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class ProductsController : ControllerBase
+    {
+        private readonly IConfiguration _configuration;
+        private readonly OnlineShoppingContext _dbContext;
+
+        public ProductsController(IConfiguration configuration, OnlineShoppingContext dbContext)
+        {
+            _configuration = configuration;
+            _dbContext = dbContext;
+        }
+
+        //[Authorize]
+        //[HttpGet("getProducts")]
+        //public IActionResult getProducts()
+        //{
+
+        //    try
+        //    {
+        //        //var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        //        //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+        //        //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        //        //if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+        //        //{
+        //        //    return Unauthorized("Missing data in the token.");
+        //        //}
+
+        //        List<Product> Products = _dbContext.Products.ToList();
+
+        //        //_AuditLogsService.Log(int.Parse(userIdClaim.Value), "getCompanies", "Companies", DateTime.Now, userIpAdress);
+
+        //        //Console.WriteLine($"Test from AuditLogs second: {testVal}");
+
+        //        return Ok(Products);
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Error: {ex.Message}");
+        //        return StatusCode(
+        //            500,
+        //            $"Error: {ex.Message}"
+        //        );
+        //    }
+        //}
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("addProduct")]
+        public async Task<IActionResult> AddProduct(
+            [FromBody] AddProductRequest request)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(request.Name))
+                    return BadRequest("Product name is required.");
+
+                if (request.Price < 0)
+                    return BadRequest("Price cannot be negative.");
+
+                if (request.Quantity < 0)
+                    return BadRequest("Quantity cannot be negative.");
+
+                if (string.IsNullOrWhiteSpace(request.Type))
+                    return BadRequest("Product type is required.");
+
+                Product newProduct;
+
+                switch (request.Type)
+                {
+                    case "Electronics":
+
+                        if (request.Warranty == null || request.Warranty < 0)
+                            return BadRequest(
+                                "Warranty is required for electronics."
+                            );
+
+                        newProduct = new Electronics
+                        {
+                            Name = request.Name,
+                            Price = request.Price,
+                            Quantity = request.Quantity,
+                            Type = "Electronics",
+                            Warranty = request.Warranty.Value
+                        };
+
+                        break;
+
+                    case "Books":
+
+                        if (string.IsNullOrWhiteSpace(request.Author))
+                            return BadRequest(
+                                "Author is required for books."
+                            );
+
+                        if (string.IsNullOrWhiteSpace(request.ISBN))
+                            return BadRequest(
+                                "ISBN is required for books."
+                            );
+
+                        newProduct = new Books
+                        {
+                            Name = request.Name,
+                            Price = request.Price,
+                            Quantity = request.Quantity,
+                            Type = "Books",
+                            Author = request.Author,
+                            ISBN = request.ISBN
+                        };
+
+                        break;
+
+                    case "Clothes":
+
+                        if (request.Size == null)
+                            return BadRequest(
+                                "Size is required for clothes."
+                            );
+
+                        if (string.IsNullOrWhiteSpace(request.Color))
+                            return BadRequest(
+                                "Color is required for clothes."
+                            );
+
+                        newProduct = new Clothes
+                        {
+                            Name = request.Name,
+                            Price = request.Price,
+                            Quantity = request.Quantity,
+                            Type = "Clothes",
+                            Size = request.Size.Value,
+                            Color = request.Color
+                        };
+
+                        break;
+
+                    default:
+                        return BadRequest(
+                            "Invalid product type. Use Electronics, Books, or Clothes."
+                        );
+                }
+
+                _dbContext.Products.Add(newProduct);
+
+                await _dbContext.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    message = "Product added successfully.",
+                    productId = newProduct.ProductId,
+                    product = newProduct
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    500,
+                    $"An error occurred while adding the product: {ex.Message}"
+                );
+            }
+        }
+
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetAllProducts()
+        {
+            var products = await _dbContext.Products
+                .ToListAsync();
+
+            var result = products.Select(product => new
+            {
+                product.ProductId,
+                product.Name,
+                product.Price,
+                product.Quantity,
+                product.Type,
+
+                // Electronics data
+                Warranty = product is Electronics electronics
+                    ? electronics.Warranty
+                    : (double?)null,
+
+                // Books data
+                Author = product is Books book
+                    ? book.Author
+                    : null,
+
+                ISBN = product is Books book2
+                    ? book2.ISBN
+                    : null,
+
+                // Clothes data
+                Size = product is Clothes clothes
+                    ? clothes.Size
+                    : (int?)null,
+
+                Color = product is Clothes clothes2
+                    ? clothes2.Color
+                    : null
+            });
+
+            return Ok(result);
+        }
+
+    }
+}
+
+---------
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Online_Shopping_System.Models.Carts;
+using Online_Shopping_System.Models.Products;
+using Online_Shopping_System.Data;
+using System.Security.Claims;
+using System.Data;
+using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore.Infrastructure;
+//using System.ComponentModel.Design;
+//using System.Linq;
+//using System.Net;
+//using Microsoft.Data.SqlClient;
+//using Online_Shopping_System.Services;
+//using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+
+
+namespace Online_Shopping_System.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class CartController : ControllerBase
+    {
+        private readonly IConfiguration _configuration;
+        private readonly OnlineShoppingContext _dbContext;
+
+        public CartController(IConfiguration configuration, OnlineShoppingContext dbContext)
+        {
+            _configuration = configuration;
+            _dbContext = dbContext;
+        }
+
+        [Authorize]
+        [HttpPost("addToCart")]
+        public async Task<IActionResult> AddToCart(int productId, int quantity)
+        {
+            /*
+             info: Online-Shopping-System[0]
+             POST /Cart/addToCart responded 200 in 728 ms
+            --
+            info: Online-Shopping-System[0]
+            POST /Cart/addToCart responded 200 in 203 ms
+            ---
+            info: Online-Shopping-System[0]
+            POST /Cart/addToCart responded 200 in 82 ms
+             */
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                {
+                    return Unauthorized("Missing data in the token.");
+                }
+
+                if (quantity <= 0)
+                {
+                    return BadRequest("Quantity must be greater than 0.");
+                }
+
+                // --------- FOR PRODUCTION ---------------
+                var affectedRows = await _dbContext.Products
+                    .Where(p => p.ProductId == productId && p.Quantity >= quantity)
+                    .ExecuteUpdateAsync(setters => setters
+                        .SetProperty(p => p.Quantity, p => p.Quantity - quantity));
+
+                if (affectedRows == 0)
+                {
+                    // Product doesn't exist OR insufficient quantity
+                    return BadRequest("Insufficient product quantity.");
+                }
+
+                Product product = _dbContext.Products.FirstOrDefault(p => p.ProductId == productId);
+
+                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.UserId == int.Parse(userIdClaim.Value) && c.CartStatus == "Pending");
+
+                //if (product == null)
+                //{
+                //    return NotFound("Product not found.");
+                //}
+
+                //if (quantity > product.Quantity)
+                //{
+                //    Console.WriteLine($"quantity: {quantity}  |  product.Quantity: {product.Quantity}");
+                //    return BadRequest("Not enough products in stock.");
+                //}
+                //product.Quantity -= quantity;
+
+                if (cart == null)
+                {
+                    cart = new Cart
+                    {
+                        UserId = int.Parse(userIdClaim.Value),
+                        TotalPrice = 0,
+                        CreatedAt = DateTimeOffset.Now,
+                        CartStatus = "Pending"
+                    };
+
+                    _dbContext.Carts.Add(cart);
+                    _dbContext.SaveChanges();
+                }
+
+                CartItem item = _dbContext.CartItems.FirstOrDefault(i => i.ProductId == productId && i.CartId == cart.CartId);
+
+                if (item == null)
+                {
+                    item = new CartItem
+                    {
+                        CartId = cart.CartId,
+                        ProductId = productId,
+                        Quantity = quantity,
+                        TotalPrice = product.Price * quantity
+                    };
+                    _dbContext.CartItems.Add(item);
+                    _dbContext.SaveChanges();
+                }
+                else
+                {
+                    item.Quantity += quantity;
+                    item.TotalPrice += quantity * product.Price;
+                }
+
+                cart.TotalPrice += product.Price * quantity;
+
+                _dbContext.SaveChanges();
+
+                await transaction.CommitAsync();
+
+                return Ok(
+                    $"Product: {product.ProductId} is now added to cart: {cart.CartId} as item: {item.CartItemId}"
+                );
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+
+                Console.WriteLine($"Error: {ex.Message}");
+                return StatusCode(
+                    500,
+                    $"Error: {ex.Message}"
+                );
+            }
+        }
+
+
+        [Authorize]
+        [HttpGet("previewCart")]
+        public IActionResult PreviewCart()
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                {
+                    return Unauthorized("Missing data in the token.");
+                }
+
+                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.UserId == int.Parse(userIdClaim.Value) && c.CartStatus == "Pending");
+
+                if(cart == null)
+                {
+                    return Ok(new List<object>());
+                }
+
+                var cartItems = _dbContext.CartItems
+                    .Where(i => i.CartId == cart.CartId)
+                    .Select(i => new
+                    {
+                        i.CartItemId,
+                        ProductName = i.Product.Name,
+                        i.Quantity,
+                        i.TotalPrice,
+                        ItemPrice = i.Product.Price
+                    })
+                    .ToList();
+
+                return Ok(
+                    cartItems
+                );
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return StatusCode(
+                    500,
+                    $"Error: {ex.Message}"
+                );
+            }
+        }
+
+    }
+}
+
+------------
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Online_Shopping_System.Data;
+using Online_Shopping_System.Models.Carts;
+using Online_Shopping_System.Models.Orders;
+using Online_Shopping_System.Models.Shipping;
+using System.Security.Claims;
+
+namespace Online_Shopping_System.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class OrderController : ControllerBase
+    {
+        private readonly IConfiguration _configuration;
+        private readonly OnlineShoppingContext _dbContext;
+
+        public OrderController(IConfiguration configuration, OnlineShoppingContext dbContext)
+        {
+            _configuration = configuration;
+            _dbContext = dbContext;
+        }
+
+
+        [Authorize]
+        [HttpPost("confirmOrder")]
+        public async Task<IActionResult> ConfirmOrder(int shippingTypeId)
+        {
+            /*
+             info: Online-Shopping-System[0]
+              POST /Order/confirmOrder responded 200 in 171 ms
+             --
+            info: Online-Shopping-System[0]
+            POST /Order/confirmOrder responded 500 in 392 ms
+
+            ------- after --------
+            info: Online-Shopping-System[0]
+              POST /Order/confirmOrder responded 500 in 541 ms
+
+             */
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+                if (userIdClaim == null)
+                {
+                    return Unauthorized("Missing data in the token.");
+                }
+                int userId = int.Parse(userIdClaim.Value);
+
+                Cart cart = await _dbContext.Carts.FirstOrDefaultAsync(c => c.UserId == userId && c.CartStatus == "Pending");
+
+                if (cart == null)
+                {
+                    return BadRequest($"Cart not found. {userId} - {shippingTypeId}");
+                }
+
+
+                ShippingType ShippingType = await _dbContext.ShippingTypes.FirstOrDefaultAsync(s => s.ShippingTypeId == shippingTypeId);
+
+                if (ShippingType == null)
+                {
+                    return BadRequest("Shipping Type not found.");
+                }
+
+
+                Order order = new Order
+                {
+                    CartId = cart.CartId,
+                    UserId = userId,
+                    OrderStatus = "Pending",
+                    CreatedAt = DateTimeOffset.Now,
+                    TotalCost = cart.TotalPrice + ShippingType.ShippingCost
+                };
+                _dbContext.Orders.Add(order);
+                await _dbContext.SaveChangesAsync();
+
+                ShippingRecords newShippingRecord = new ShippingRecords
+                {
+                    OrderId = order.OrderId,
+                    ShippingTypeId = ShippingType.ShippingTypeId,
+                    ShippingAddress = "Test Address from payment controller"
+                };
+
+                _dbContext.ShippingRecords.Add(newShippingRecord);
+                await _dbContext.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                return Ok($"Order {order.OrderId} has benn confermed.");
+
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+
+                Console.WriteLine($"Error: {ex.Message}");
+                return StatusCode(
+                    500,
+                    $"Error: {ex.Message}"
+                );
+            }
+        }
+
+
+        [Authorize]
+        [HttpGet("getOrders")]
+        public IActionResult getOrders()
+        {
+
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                {
+                    return Unauthorized("Missing data in the token.");
+                }
+
+                var orders = _dbContext.Orders.Where(c => c.UserId == int.Parse(userIdClaim.Value)).ToList();
+
+                return Ok(orders);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return StatusCode(
+                    500,
+                    $"Error: {ex.Message}"
+                );
+            }
+        }
+
+
+        [Authorize]
+        [HttpGet("getUserUnpaidOrder")]
+        public IActionResult getUserUnpaidOrder()
+        {
+
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                {
+                    return Unauthorized("Missing data in the token.");
+                }
+
+                var order = _dbContext.Orders.FirstOrDefault(c => c.UserId == int.Parse(userIdClaim.Value) && c.OrderStatus == "Pending");
+
+                return Ok(order);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return StatusCode(
+                    500,
+                    $"Error: {ex.Message}"
+                );
+            }
+        }
+
+    }
+}
+
+__________
+using Konscious.Security.Cryptography;
+using Microsoft.AspNetCore.Mvc;
+using Online_Shopping_System.Data;
+using Online_Shopping_System.Models.Users;
+using Online_Shopping_System.Services;
+using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
+//using System.Data;
+//using System.Security.Claims;
+
+namespace market_watch.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class RegisterController : ControllerBase
+    {
+        private readonly IConfiguration _configuration;
+        private readonly OnlineShoppingContext _dbContext;
+        private readonly JwtService _jwtService;
+        //private readonly AuditLogsService _AuditLogsService;
+        List<string> userRolls = new List<string> { "Admin", "User", "Analyst"};
+
+        public RegisterController(IConfiguration configuration, OnlineShoppingContext dbContext, JwtService jwtService)
+        {
+            _configuration = configuration;
+            _dbContext = dbContext;
+            _jwtService = jwtService;
+        }
+
+        public record PasswordHashResult(
+            byte[] Hash,
+            byte[] Salt
+        );
+
+        public static async Task<byte[]> HashPasswordWithSalt(string password, byte[] salt)
+        {
+            byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
+
+            var argon2 = new Argon2id(passwordBytes)
+            {
+                Salt = salt,
+                DegreeOfParallelism = 4,
+                Iterations = 3,
+                MemorySize = 65536
+            };
+
+            return await argon2.GetBytesAsync(32);
+        }
+
+        public static async Task<PasswordHashResult> HashPassword(string password)
+        {
+            byte[] salt = RandomNumberGenerator.GetBytes(16);
+            byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
+
+            var argon2 = new Argon2id(passwordBytes)
+            {
+                Salt = salt,
+                DegreeOfParallelism = 4,
+                Iterations = 3,
+                MemorySize = 65536 // 64 MB
+            };
+
+            byte[] hash = await argon2.GetBytesAsync(32);
+
+            return new PasswordHashResult(Hash: hash, Salt: salt );
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> register(string UserName, string email, string Password, string userRole)
+        {
+
+            try
+            {
+                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+                bool isValidRole = userRolls.Contains(userRole);
+                bool isUniqueUsername = !_dbContext.Users.Any(u => u.UserName == UserName);
+                bool CorrectEmailFormat = email.Contains("@") && email.Contains(".");
+
+                //bool isValidPassword = Password.Length >= 8;
+                bool isValidPassword = true;
+
+                //Console.WriteLine($" {isValidRole} - {isUniqueUsername} - {CorrectEmailFormat} - {isValidPassword}");
+
+                if (!isValidRole && isUniqueUsername && CorrectEmailFormat && isValidPassword)
+                {
+                    return BadRequest($"The entered data is incorrect. {isValidRole} - {isUniqueUsername} - {CorrectEmailFormat} - {isValidPassword}");
+                }
+
+                PasswordHashResult passwordHashResult = await HashPassword(Password);
+
+                User newUser = new User
+                {
+                    UserTypeId = 1,
+                    UserName = UserName,
+                    Email = email,
+                    PasswordHashed = passwordHashResult.Hash,
+                    PasswordSalt = passwordHashResult.Salt,
+                    UserRole = userRole
+                };
+
+                _dbContext.Users.Add(newUser);
+                _dbContext.SaveChanges();
+
+                //_AuditLogsService.Log(newUser.UserId, "register", "Users", DateTime.Now, userIpAdress);
+
+                return Ok("Registered successfuly");
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return StatusCode(
+                    500,
+                    $"Error: {ex.Message}"
+                );
+            }
+        }
+
+
+        [HttpPost("login")]
+        public async Task<IActionResult> login(string UserName, string Password)
+        {
+
+            try
+            {
+                var sw = Stopwatch.StartNew();
+
+                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                User? user = _dbContext.Users.FirstOrDefault(u => u.UserName == UserName);
+
+                Console.WriteLine($"DB query: {sw.ElapsedMilliseconds} ms");
+                sw.Restart();
+
+                //Console.WriteLine($"Error Top: {user}");
+                if (user == null)
+                {
+                    return Unauthorized("Invalid username or password.");
+                }
+
+                byte[] passwordHashResult = await HashPasswordWithSalt(Password, user.PasswordSalt);
+
+                Console.WriteLine($"Argon2: {sw.ElapsedMilliseconds} ms");
+
+                sw.Restart();
+
+                bool passwordValid = !CryptographicOperations.FixedTimeEquals(user.PasswordHashed, passwordHashResult);
+
+                Console.WriteLine($"Hash comparison: {sw.ElapsedMilliseconds} ms");
+
+                sw.Restart();
+
+                if (passwordValid)
+                {
+                    return Unauthorized("Invalid username or password.");
+                }
+
+                //Console.WriteLine($"Error Top: {passwordHashResult}");
+
+                var token = _jwtService.GenerateToken(
+                        user
+                    );
+
+                Console.WriteLine($"JWT generation: {sw.ElapsedMilliseconds} ms");
+
+                //_AuditLogsService.Log(user.UserId, "login", "Users", DateTime.Now, userIpAdress);
+
+                return Ok($"Logged in successfuly. Token: {token}");
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return StatusCode(
+                    500,
+                    $"Error: {ex.Message}"
+                );
+            }
+        }
+
+    }
+}
+
+-------
+using Microsoft.AspNetCore.Mvc;
+using Online_Shopping_System.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Online_Shopping_System.Models.Carts;
+using Online_Shopping_System.Models.Orders;
+using Online_Shopping_System.Models.Payment;
+using Online_Shopping_System.Models.Users;
+using Online_Shopping_System.Data;
+using System.Security.Claims;
+
+[ApiController]
+[Route("[controller]")]
+public class ReportsController : ControllerBase
+{
+    private readonly ReportService _reportService;
+
+    public ReportsController(ReportService reportService)
+    {
+        _reportService = reportService;
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("orders/excel")]
+    public async Task<IActionResult> OrdersExcel()
+    {
+        try
+        {
+            var file = await _reportService.GenerateOrdersExcelAsync();
+
+            return File(
+                file,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"Orders-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.xlsx");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+
+    }
+
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("orders/pdf")]
+    public async Task<IActionResult> OrdersPdf()
+    {
+        try
+        {
+            var file = await _reportService.GenerateOrdersPdfAsync();
+
+            return File(
+                file,
+                "application/pdf",
+                $"Orders-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.pdf");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+}
+
+------
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Online_Shopping_System.Data;
+using System.Security.Claims;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.Data.SqlClient;
+//using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore.Infrastructure;
+//using Online_Shopping_System.Models.Carts;
+//using Online_Shopping_System.Models.Products;
+//using System.ComponentModel.Design;
+//using System.Data;
+//using System.Linq;
+//using System.Net;
+//using Online_Shopping_System.Services;
+//using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+
+
+namespace Online_Shopping_System.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class ShippingController : ControllerBase
+    {
+        private readonly IConfiguration _configuration;
+        private readonly OnlineShoppingContext _dbContext;
+
+        public ShippingController(IConfiguration configuration, OnlineShoppingContext dbContext)
+        {
+            _configuration = configuration;
+            _dbContext = dbContext;
+        }
+
+        [Authorize]
+        [HttpGet("getShippingTypes")]
+        public IActionResult GetShippingTypes()
+        {
+
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                {
+                    return Unauthorized("Missing data in the token.");
+                }
+
+                var cart = _dbContext.ShippingTypes.ToList();
+
+                return Ok(
+                    cart
+                );
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return StatusCode(
+                    500,
+                    $"Error: {ex.Message}"
+                );
+            }
+        }
+        
+    }
+}
