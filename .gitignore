@@ -1,0 +1,18 @@
+```gitignore
+# Visual Studio
+.vs/
+
+# Build output
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+
+# Rider
+.idea/
+
+# Generated files
+*.userprefs
+```
