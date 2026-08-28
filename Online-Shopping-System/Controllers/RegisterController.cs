@@ -1,5 +1,6 @@
 ﻿using Konscious.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Online_Shopping_System.Data;
 using Online_Shopping_System.Models.Users;
 using Online_Shopping_System.Services;
@@ -101,7 +102,7 @@ namespace market_watch.Controllers
                 };
 
                 _dbContext.Users.Add(newUser);
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
 
                 //_AuditLogsService.Log(newUser.UserId, "register", "Users", DateTime.Now, userIpAdress);
 
@@ -125,13 +126,13 @@ namespace market_watch.Controllers
 
             try
             {
-                var sw = Stopwatch.StartNew();
+                //var sw = Stopwatch.StartNew();
 
                 var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
-                User? user = _dbContext.Users.FirstOrDefault(u => u.UserName == UserName);
+                User? user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserName == UserName);
 
-                Console.WriteLine($"DB query: {sw.ElapsedMilliseconds} ms");
-                sw.Restart();
+                //Console.WriteLine($"DB query: {sw.ElapsedMilliseconds} ms");
+                //sw.Restart();
 
                 //Console.WriteLine($"Error Top: {user}");
                 if (user == null)
@@ -141,15 +142,13 @@ namespace market_watch.Controllers
 
                 byte[] passwordHashResult = await HashPasswordWithSalt(Password, user.PasswordSalt);
 
-                Console.WriteLine($"Argon2: {sw.ElapsedMilliseconds} ms");
-
-                sw.Restart();
+                //Console.WriteLine($"Argon2: {sw.ElapsedMilliseconds} ms");
+                //sw.Restart();
 
                 bool passwordValid = !CryptographicOperations.FixedTimeEquals(user.PasswordHashed, passwordHashResult);
 
-                Console.WriteLine($"Hash comparison: {sw.ElapsedMilliseconds} ms");
-
-                sw.Restart();
+                //Console.WriteLine($"Hash comparison: {sw.ElapsedMilliseconds} ms");
+                //sw.Restart();
 
                 if (passwordValid)
                 {
@@ -162,7 +161,7 @@ namespace market_watch.Controllers
                         user
                     );
 
-                Console.WriteLine($"JWT generation: {sw.ElapsedMilliseconds} ms");
+                //Console.WriteLine($"JWT generation: {sw.ElapsedMilliseconds} ms");
 
                 //_AuditLogsService.Log(user.UserId, "login", "Users", DateTime.Now, userIpAdress);
 
@@ -171,7 +170,7 @@ namespace market_watch.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                //Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,
                     $"Error: {ex.Message}"

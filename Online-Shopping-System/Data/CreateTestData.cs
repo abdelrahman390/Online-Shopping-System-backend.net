@@ -36,7 +36,7 @@ namespace Online_Shopping_System.Data
                 {
                     Name = "Electronics-" + i,
                     Price = 250,
-                    Quantity = 5,
+                    Quantity = 10000,
                     Type = "Electronics",
                     Warranty = 24
                 };
@@ -49,7 +49,7 @@ namespace Online_Shopping_System.Data
                 {
                     Name = "Book-" + i,
                     Price = 50,
-                    Quantity = 10,
+                    Quantity = 10000,
                     Type = "Books",
                     Author = "Author-" + 1,
                     ISBN = "ISBN-" + 1
@@ -64,7 +64,7 @@ namespace Online_Shopping_System.Data
                 {
                     Name = "Clothes-" + i,
                     Price = 70,
-                    Quantity = 20,
+                    Quantity = 10000,
                     Type = "Clothes",
                     Size = i+1,
                     Color = "Color-" + i
@@ -84,7 +84,7 @@ namespace Online_Shopping_System.Data
                 User newUser = new User
                 {
                     UserName = "User" + i.ToString(),
-                    Email = "abdelrahmanbo390@gmail.com",
+                    Email = "User" + i.ToString() + "@gmail.com",
                     PasswordHashed = Array.Empty<byte>(),
                     UserTypeId = 1,
                     PasswordSalt = Array.Empty<byte>(),

@@ -39,12 +39,12 @@ namespace Online_Shopping_System.Controllers
               POST /Order/confirmOrder responded 500 in 541 ms
 
              */
-            using var transaction = _dbContext.Database.BeginTransaction();
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
-                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
                 if (userIdClaim == null)
                 {
@@ -52,7 +52,7 @@ namespace Online_Shopping_System.Controllers
                 }
                 int userId = int.Parse(userIdClaim.Value);
 
-                Cart cart =  _dbContext.Carts.FirstOrDefault(c => c.UserId == userId && c.CartStatus == "Pending");
+                Cart cart = await _dbContext.Carts.FirstOrDefaultAsync(c => c.UserId == userId && c.CartStatus == "Pending");
 
                 if (cart == null)
                 {
@@ -60,13 +60,12 @@ namespace Online_Shopping_System.Controllers
                 }
 
 
-                ShippingType ShippingType = _dbContext.ShippingTypes.FirstOrDefault(s => s.ShippingTypeId == shippingTypeId);
+                ShippingType ShippingType = await _dbContext.ShippingTypes.FirstOrDefaultAsync(s => s.ShippingTypeId == shippingTypeId);
 
                 if (ShippingType == null)
                 {
                     return BadRequest("Shipping Type not found.");
                 }
-
 
                 Order order = new Order
                 {
@@ -77,7 +76,7 @@ namespace Online_Shopping_System.Controllers
                     TotalCost = cart.TotalPrice + ShippingType.ShippingCost
                 };
                 _dbContext.Orders.Add(order);
-                _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
 
                 ShippingRecords newShippingRecord = new ShippingRecords
                 {
@@ -87,16 +86,16 @@ namespace Online_Shopping_System.Controllers
                 };
 
                 _dbContext.ShippingRecords.Add(newShippingRecord);
-                _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
 
-                transaction.CommitAsync();
+                await transaction.CommitAsync();
 
                 return Ok($"Order {order.OrderId} has benn confermed.");
 
             }
             catch (Exception ex)
             {
-                transaction.RollbackAsync();
+                await transaction.RollbackAsync();
 
                 Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(

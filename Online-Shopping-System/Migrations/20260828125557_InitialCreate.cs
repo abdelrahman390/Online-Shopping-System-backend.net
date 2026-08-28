@@ -120,7 +120,7 @@ namespace Online_Shopping_System.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserTypeId = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     PasswordHashed = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     UserRole = table.Column<string>(type: "nvarchar(max)", nullable: false)
@@ -224,7 +224,7 @@ namespace Online_Shopping_System.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OrderId = table.Column<int>(type: "int", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TransactionId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TransactionId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     PaymentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
@@ -327,6 +327,12 @@ namespace Online_Shopping_System.Migrations
                 column: "CartId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CartItems_CartId_ProductId",
+                table: "CartItems",
+                columns: new[] { "CartId", "ProductId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CartItems_ProductId",
                 table: "CartItems",
                 column: "ProductId");
@@ -353,6 +359,12 @@ namespace Online_Shopping_System.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Payments_TransactionId",
+                table: "Payments",
+                column: "TransactionId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ShippingRecords_OrderId",
                 table: "ShippingRecords",
                 column: "OrderId",
@@ -362,6 +374,12 @@ namespace Online_Shopping_System.Migrations
                 name: "IX_ShippingRecords_ShippingTypeId",
                 table: "ShippingRecords",
                 column: "ShippingTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Email",
+                table: "Users",
+                column: "Email",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_UserTypeId",

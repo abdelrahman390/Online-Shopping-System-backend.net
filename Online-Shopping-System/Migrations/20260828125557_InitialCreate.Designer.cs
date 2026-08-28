@@ -12,7 +12,7 @@ using Online_Shopping_System.Data;
 namespace Online_Shopping_System.Migrations
 {
     [DbContext(typeof(OnlineShoppingContext))]
-    [Migration("20260826225730_InitialCreate")]
+    [Migration("20260828125557_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -79,6 +79,9 @@ namespace Online_Shopping_System.Migrations
 
                     b.HasIndex("ProductId");
 
+                    b.HasIndex("CartId", "ProductId")
+                        .IsUnique();
+
                     b.ToTable("CartItems");
                 });
 
@@ -142,11 +145,14 @@ namespace Online_Shopping_System.Migrations
 
                     b.Property<string>("TransactionId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("PaymentId");
 
                     b.HasIndex("OrderId");
+
+                    b.HasIndex("TransactionId")
+                        .IsUnique();
 
                     b.ToTable("Payments", (string)null);
 
@@ -246,7 +252,7 @@ namespace Online_Shopping_System.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<byte[]>("PasswordHashed")
                         .IsRequired()
@@ -268,6 +274,9 @@ namespace Online_Shopping_System.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.HasIndex("UserTypeId");
 

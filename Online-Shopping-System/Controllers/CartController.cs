@@ -6,6 +6,7 @@ using Online_Shopping_System.Data;
 using System.Security.Claims;
 using System.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 //using Microsoft.EntityFrameworkCore.Infrastructure;
 //using System.ComponentModel.Design;
 //using System.Linq;
@@ -44,14 +45,22 @@ namespace Online_Shopping_System.Controllers
             info: Online-Shopping-System[0]
             POST /Cart/addToCart responded 200 in 82 ms
              */
-            using var transaction = _dbContext.Database.BeginTransaction();
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
             try
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
-                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                //var sw = Stopwatch.StartNew();
+
+                var userId = int.Parse(userIdClaim.Value);
+
+                //Console.WriteLine($"user Id change: {sw.ElapsedMilliseconds} ms");
+                //sw.Restart();
+
+                if (userIdClaim == null)
                 {
                     return Unauthorized("Missing data in the token.");
                 }
@@ -62,10 +71,13 @@ namespace Online_Shopping_System.Controllers
                 }
 
                 // --------- FOR PRODUCTION ---------------
-                var affectedRows = _dbContext.Products
+                var affectedRows = await _dbContext.Products
                     .Where(p => p.ProductId == productId && p.Quantity >= quantity)
-                    .ExecuteUpdate(setters => setters
+                    .ExecuteUpdateAsync(setters => setters
                         .SetProperty(p => p.Quantity, p => p.Quantity - quantity));
+
+                //Console.WriteLine($"AffectedRows DB query: {sw.ElapsedMilliseconds} ms");
+                //sw.Restart();
 
                 if (affectedRows == 0)
                 {
@@ -73,37 +85,43 @@ namespace Online_Shopping_System.Controllers
                     return BadRequest("Insufficient product quantity.");
                 }
 
-                Product product = _dbContext.Products.FirstOrDefault(p => p.ProductId == productId);
+                //Product product = await _dbContext.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+                var price = await _dbContext.Products
+                    .Where(p => p.ProductId == productId)
+                    .Select(p => p.Price)
+                    .SingleAsync();
 
-                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.UserId == int.Parse(userIdClaim.Value) && c.CartStatus == "Pending");
+                //Console.WriteLine($"product price DB query: {sw.ElapsedMilliseconds} ms");
+                //sw.Restart();
 
-                //if (product == null)
-                //{
-                //    return NotFound("Product not found.");
-                //}
+                Cart cart = await _dbContext.Carts.FirstOrDefaultAsync(c => c.UserId == userId && c.CartStatus == "Pending");
 
-                //if (quantity > product.Quantity)
-                //{
-                //    Console.WriteLine($"quantity: {quantity}  |  product.Quantity: {product.Quantity}");
-                //    return BadRequest("Not enough products in stock.");
-                //}
-                //product.Quantity -= quantity;
+                //Console.WriteLine($"cart DB query: {sw.ElapsedMilliseconds} ms");
+                //sw.Restart();
 
                 if (cart == null)
                 {
                     cart = new Cart
                     {
-                        UserId = int.Parse(userIdClaim.Value),
+                        UserId = userId,
                         TotalPrice = 0,
                         CreatedAt = DateTimeOffset.Now,
                         CartStatus = "Pending"
                     };
 
                     _dbContext.Carts.Add(cart);
-                    _dbContext.SaveChanges();
+                    await _dbContext.SaveChangesAsync();
+
+                    //Console.WriteLine($"create cart DB query: {sw.ElapsedMilliseconds} ms");
+                    //sw.Restart();
                 }
 
-                CartItem item = _dbContext.CartItems.FirstOrDefault(i => i.ProductId == productId && i.CartId == cart.CartId);
+
+
+                CartItem item = await _dbContext.CartItems.FirstOrDefaultAsync(i => i.ProductId == productId && i.CartId == cart.CartId);
+
+                //Console.WriteLine($"cart item DB query: {sw.ElapsedMilliseconds} ms");
+                //sw.Restart();
 
                 if (item == null)
                 {
@@ -112,30 +130,35 @@ namespace Online_Shopping_System.Controllers
                         CartId = cart.CartId,
                         ProductId = productId,
                         Quantity = quantity,
-                        TotalPrice = product.Price * quantity
+                        TotalPrice = price * quantity
                     };
                     _dbContext.CartItems.Add(item);
-                    _dbContext.SaveChanges();
+                    await _dbContext.SaveChangesAsync();
+                    //Console.WriteLine($"create cart item DB query: {sw.ElapsedMilliseconds} ms");
+                    //sw.Restart();
                 }
                 else
                 {
                     item.Quantity += quantity;
-                    item.TotalPrice += quantity * product.Price;
+                    item.TotalPrice += quantity * price;
                 }
 
-                cart.TotalPrice += product.Price * quantity;
+                cart.TotalPrice += price * quantity;
 
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
 
-                transaction.CommitAsync();
+                await transaction.CommitAsync();
+
+                //Console.WriteLine($"End of api: {sw.ElapsedMilliseconds} ms");
+                //sw.Restart();
 
                 return Ok(
-                    $"Product: {product.ProductId} is now added to cart: {cart.CartId} as item: {item.CartItemId}"
+                    $"Product: {productId} is now added to cart: {cart.CartId} as item: {item.CartItemId}"
                 );
             }
             catch (Exception ex)
             {
-               transaction.RollbackAsync();
+                await transaction.RollbackAsync();
 
                 Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
@@ -155,13 +178,14 @@ namespace Online_Shopping_System.Controllers
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
                 var userRoleClaim = User.FindFirst(ClaimTypes.Role);
                 var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                var userId = int.Parse(userIdClaim.Value);
 
                 if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
                 {
                     return Unauthorized("Missing data in the token.");
                 }
 
-                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.UserId == int.Parse(userIdClaim.Value) && c.CartStatus == "Pending");
+                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.UserId == userId && c.CartStatus == "Pending");
 
                 if(cart == null)
                 {

@@ -102,6 +102,10 @@ namespace Online_Shopping_System.Data
                 .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Find a user's cart quickly
+            modelBuilder.Entity<Cart>()
+                .HasIndex(c => c.UserId);
+
             // Cart 1 ---- * CartItems
             modelBuilder.Entity<CartItem>()
                 .HasOne(ci => ci.Cart)
@@ -109,12 +113,25 @@ namespace Online_Shopping_System.Data
                 .HasForeignKey(ci => ci.CartId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Find all items belonging to a cart quickly
+            modelBuilder.Entity<CartItem>()
+                .HasIndex(ci => ci.CartId);
+
             // Product 1 ---- * CartItems
             modelBuilder.Entity<CartItem>()
                 .HasOne(ci => ci.Product)
                 .WithMany()
                 .HasForeignKey(ci => ci.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Find cart items for a product quickly
+            modelBuilder.Entity<CartItem>()
+                .HasIndex(ci => ci.ProductId);
+
+            // A product should normally appear only once in a cart
+            modelBuilder.Entity<CartItem>()
+                .HasIndex(ci => new { ci.CartId, ci.ProductId })
+                .IsUnique();
 
 
             // ==========================================
@@ -138,6 +155,9 @@ namespace Online_Shopping_System.Data
                 .HasForeignKey(o => o.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Get all orders for a user
+            modelBuilder.Entity<Order>()
+                .HasIndex(o => o.UserId);
 
             // ==========================================
             // USER
@@ -152,6 +172,14 @@ namespace Online_Shopping_System.Data
                 .WithMany(ut => ut.Users)
                 .HasForeignKey(u => u.UserTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.UserTypeId);
+
+            // If Email is used for login:
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
 
 
             // ==========================================
@@ -205,6 +233,15 @@ namespace Online_Shopping_System.Data
             modelBuilder.Entity<WalletPayment>()
                 .ToTable("WalletPayments");
 
+            // Get payments belonging to an order
+            modelBuilder.Entity<Payment>()
+                .HasIndex(p => p.OrderId);
+
+            // If TransactionId is used to find a payment
+            modelBuilder.Entity<Payment>()
+                .HasIndex(p => p.TransactionId)
+                .IsUnique();
+
 
             // ==========================================
             // PAYMENT TYPE
@@ -229,6 +266,9 @@ namespace Online_Shopping_System.Data
                 .WithMany(st => st.ShippingRecords)
                 .HasForeignKey(sr => sr.ShippingTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ShippingRecords>()
+                .HasIndex(sr => sr.ShippingTypeId);
 
 
             // ==========================================
