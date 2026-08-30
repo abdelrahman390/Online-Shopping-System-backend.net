@@ -15,7 +15,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Online_Shopping_System.Tests
+namespace Online_Shopping_System.Tests.Controllers
 {
     public class PaymentControllerTests : IDisposable
     {

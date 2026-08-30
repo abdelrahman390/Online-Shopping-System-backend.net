@@ -119,7 +119,7 @@ namespace Online_Shopping_System.Controllers
         [HttpPost("creditCardPay")]
         public async Task<IActionResult> CreditCardPay(string cardNumber)
         {
-            using var transaction = _dbContext.Database.BeginTransaction();
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -131,7 +131,7 @@ namespace Online_Shopping_System.Controllers
                     return Unauthorized("Missing data in the token.");
                 }
 
-                Order order = _dbContext.Orders.FirstOrDefault(o => o.UserId == int.Parse(userIdClaim.Value) && o.OrderStatus == "Pending");
+                Order order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.UserId == int.Parse(userIdClaim.Value) && o.OrderStatus == "Pending");
 
                 if (order == null)
                 {
@@ -153,7 +153,7 @@ namespace Online_Shopping_System.Controllers
                 creditCardPayment.Amount = order.TotalCost;
                 creditCardPayment.Date = DateTimeOffset.Now;
 
-                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.CartId == order.CartId && c.CartStatus == "Pending");
+                Cart cart = await _dbContext.Carts.FirstOrDefaultAsync(c => c.CartId == order.CartId && c.CartStatus == "Pending");
 
                 order.OrderStatus = "Confirmed";
                 order.PaymentTypeName = "CreditCard";
@@ -163,21 +163,21 @@ namespace Online_Shopping_System.Controllers
 
                 _dbContext.SaveChanges();
 
-                User user = _dbContext.Users.FirstOrDefault(u => u.UserId == int.Parse(userIdClaim.Value));
+                User user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserId == int.Parse(userIdClaim.Value));
 
-                Console.WriteLine($"Test: {cardNumber}");
+                //Console.WriteLine($"Test: {cardNumber}");
 
-                Console.WriteLine("Before sending email");
+                //Console.WriteLine("Before sending email");
 
-                await _emailService.SendEmailAsync(
-                    "abdelrahmanbo390@gmail.com",
-                    "Order Confirmation.",
-                    "Hello from Online-Shopping-System, your order has benn confirmed."
-                );
+                //await _emailService.SendEmailAsync(
+                //    "abdelrahmanbo390@gmail.com",
+                //    "Order Confirmation.",
+                //    "Hello from Online-Shopping-System, your order has benn confirmed."
+                //);
 
-                Console.WriteLine("After sending email");
+                //Console.WriteLine("After sending email");
 
-                transaction.CommitAsync();
+                await transaction.CommitAsync();
 
                 return Ok(
                     $"OrderId: {order.OrderId} is now Paid and confirmed."
@@ -185,7 +185,7 @@ namespace Online_Shopping_System.Controllers
             }
             catch (Exception ex)
             {
-                transaction.RollbackAsync();
+                await transaction.RollbackAsync();
 
                 Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
@@ -199,7 +199,7 @@ namespace Online_Shopping_System.Controllers
         [HttpPost("WalletPay")]
         public async Task<IActionResult> WalletPay(string WalletNumber, string WalletProviderName)
         {
-            using var transaction = _dbContext.Database.BeginTransaction();
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -211,7 +211,7 @@ namespace Online_Shopping_System.Controllers
                     return Unauthorized("Missing data in the token.");
                 }
 
-                Order order = _dbContext.Orders.FirstOrDefault(o => o.UserId == int.Parse(userIdClaim.Value) && o.OrderStatus == "Pending");
+                Order order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.UserId == int.Parse(userIdClaim.Value) && o.OrderStatus == "Pending");
 
                 if (order == null)
                 {
@@ -239,7 +239,7 @@ namespace Online_Shopping_System.Controllers
 
                 _dbContext.Payments.Add(walletPayment);
 
-                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.CartId == order.CartId && c.CartStatus == "Pending");
+                Cart cart = await _dbContext.Carts.FirstOrDefaultAsync(c => c.CartId == order.CartId && c.CartStatus == "Pending");
 
                 order.OrderStatus = "Confirmed";
                 order.PaymentTypeName = "Wallet";
@@ -247,15 +247,15 @@ namespace Online_Shopping_System.Controllers
 
                 _dbContext.SaveChanges();
 
-                User user = _dbContext.Users.FirstOrDefault(u => u.UserId == int.Parse(userIdClaim.Value));
+                User user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserId == int.Parse(userIdClaim.Value));
 
-                await _emailService.SendEmailAsync(
-                    "abdelrahmanbo390@gmail.com",
-                    "Order Confirmation.",
-                    "Hello from Online-Shopping-System, your order has benn confirmed."
-                );
+                //await _emailService.SendEmailAsync(
+                //    "abdelrahmanbo390@gmail.com",
+                //    "Order Confirmation.",
+                //    "Hello from Online-Shopping-System, your order has benn confirmed."
+                //);
 
-                transaction.Commit();
+                await transaction.CommitAsync();
 
                 return Ok(
                     $"OrderId: {order.OrderId} is now Paid and confirmed."
@@ -264,7 +264,7 @@ namespace Online_Shopping_System.Controllers
             catch (Exception ex)
             {
 
-                 transaction.RollbackAsync();
+                await transaction.RollbackAsync();
                 Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,

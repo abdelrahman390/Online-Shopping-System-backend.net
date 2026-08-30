@@ -37,12 +37,14 @@
       "Online-Shopping-SystemTests/1.0.0": {
         "dependencies": {
           "FluentAssertions": "8.10.0",
-          "Microsoft.AspNetCore.Mvc.Testing": "8.0.19",
+          "Microsoft.AspNetCore.Mvc.Testing": "8.0.15",
           "Microsoft.EntityFrameworkCore.InMemory": "8.0.19",
           "Microsoft.EntityFrameworkCore.Sqlite": "8.0.19",
           "Microsoft.NET.Test.Sdk": "18.9.0",
           "Moq": "4.20.72",
           "Online-Shopping-System": "1.0.0",
+          "Respawn": "7.0.0",
+          "Testcontainers.MsSql": "4.14.0",
           "xunit": "2.9.3",
           "xunit.runner.visualstudio": "4.0.0",
           "Microsoft.AspNetCore.Antiforgery": "8.0.0.0",
@@ -395,6 +397,17 @@
           "lib/netstandard2.0/Azure.Identity.dll": {}
         }
       },
+      "BouncyCastle.Cryptography/2.7.0": {
+        "runtime": {
+          "lib/net6.0/BouncyCastle.Cryptography.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.7.0.16391"
+          }
+        },
+        "compile": {
+          "lib/net6.0/BouncyCastle.Cryptography.dll": {}
+        }
+      },
       "Castle.Core/5.1.1": {
         "dependencies": {
           "System.Diagnostics.EventLog": "8.0.1"
@@ -436,6 +449,118 @@
         },
         "compile": {
           "lib/netstandard2.1/ClosedXML.Parser.dll": {}
+        }
+      },
+      "Docker.DotNet.Enhanced/4.3.3": {
+        "dependencies": {
+          "Docker.DotNet.Enhanced.Handler.Abstractions": "4.3.3",
+          "Docker.DotNet.Enhanced.LegacyHttp": "4.3.3",
+          "Docker.DotNet.Enhanced.NPipe": "4.3.3",
+          "Docker.DotNet.Enhanced.NativeHttp": "4.3.3",
+          "Docker.DotNet.Enhanced.Unix": "4.3.3",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.3",
+          "System.IO.Pipelines": "8.0.0"
+        },
+        "runtime": {
+          "lib/net8.0/Docker.DotNet.dll": {
+            "assemblyVersion": "4.3.0.0",
+            "fileVersion": "4.3.3.1"
+          }
+        },
+        "compile": {
+          "lib/net8.0/Docker.DotNet.dll": {}
+        }
+      },
+      "Docker.DotNet.Enhanced.Handler.Abstractions/4.3.3": {
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.3"
+        },
+        "runtime": {
+          "lib/net8.0/Docker.DotNet.Handler.Abstractions.dll": {
+            "assemblyVersion": "4.3.0.0",
+            "fileVersion": "4.3.3.1"
+          }
+        },
+        "compile": {
+          "lib/net8.0/Docker.DotNet.Handler.Abstractions.dll": {}
+        }
+      },
+      "Docker.DotNet.Enhanced.LegacyHttp/4.3.3": {
+        "dependencies": {
+          "Docker.DotNet.Enhanced.Handler.Abstractions": "4.3.3"
+        },
+        "runtime": {
+          "lib/net8.0/Docker.DotNet.LegacyHttp.dll": {
+            "assemblyVersion": "4.3.0.0",
+            "fileVersion": "4.3.3.1"
+          },
+          "lib/net8.0/Microsoft.Net.Http.Client.dll": {
+            "assemblyVersion": "4.3.0.0",
+            "fileVersion": "4.3.3.1"
+          }
+        },
+        "compile": {
+          "lib/net8.0/Docker.DotNet.LegacyHttp.dll": {},
+          "lib/net8.0/Microsoft.Net.Http.Client.dll": {}
+        }
+      },
+      "Docker.DotNet.Enhanced.NativeHttp/4.3.3": {
+        "dependencies": {
+          "Docker.DotNet.Enhanced.Handler.Abstractions": "4.3.3"
+        },
+        "runtime": {
+          "lib/net8.0/Docker.DotNet.NativeHttp.dll": {
+            "assemblyVersion": "4.3.0.0",
+            "fileVersion": "4.3.3.1"
+          }
+        },
+        "compile": {
+          "lib/net8.0/Docker.DotNet.NativeHttp.dll": {}
+        }
+      },
+      "Docker.DotNet.Enhanced.NPipe/4.3.3": {
+        "dependencies": {
+          "Docker.DotNet.Enhanced.Handler.Abstractions": "4.3.3"
+        },
+        "runtime": {
+          "lib/net8.0/Docker.DotNet.NPipe.dll": {
+            "assemblyVersion": "4.3.0.0",
+            "fileVersion": "4.3.3.1"
+          }
+        },
+        "compile": {
+          "lib/net8.0/Docker.DotNet.NPipe.dll": {},
+          "lib/net8.0/Microsoft.Net.Http.Client.dll": {}
+        }
+      },
+      "Docker.DotNet.Enhanced.Unix/4.3.3": {
+        "dependencies": {
+          "Docker.DotNet.Enhanced.Handler.Abstractions": "4.3.3"
+        },
+        "runtime": {
+          "lib/net8.0/Docker.DotNet.Unix.dll": {
+            "assemblyVersion": "4.3.0.0",
+            "fileVersion": "4.3.3.1"
+          }
+        },
+        "compile": {
+          "lib/net8.0/Docker.DotNet.Unix.dll": {},
+          "lib/net8.0/Microsoft.Net.Http.Client.dll": {}
+        }
+      },
+      "Docker.DotNet.Enhanced.X509/4.3.3": {
+        "dependencies": {
+          "Docker.DotNet.Enhanced.Handler.Abstractions": "4.3.3"
+        },
+        "runtime": {
+          "lib/net8.0/Docker.DotNet.X509.dll": {
+            "assemblyVersion": "4.3.0.0",
+            "fileVersion": "4.3.3.1"
+          }
+        },
+        "compile": {
+          "lib/net8.0/Docker.DotNet.X509.dll": {},
+          "lib/net8.0/Microsoft.Net.Http.Client.dll": {}
         }
       },
       "DocumentFormat.OpenXml/3.1.1": {
@@ -528,30 +653,30 @@
           "lib/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll": {}
         }
       },
-      "Microsoft.AspNetCore.Mvc.Testing/8.0.19": {
+      "Microsoft.AspNetCore.Mvc.Testing/8.0.15": {
         "dependencies": {
-          "Microsoft.AspNetCore.TestHost": "8.0.19",
+          "Microsoft.AspNetCore.TestHost": "8.0.15",
           "Microsoft.Extensions.DependencyModel": "8.0.2",
           "Microsoft.Extensions.Hosting": "8.0.1"
         },
         "runtime": {
           "lib/net8.0/Microsoft.AspNetCore.Mvc.Testing.dll": {
-            "assemblyVersion": "8.0.19.0",
-            "fileVersion": "8.0.1925.37204"
+            "assemblyVersion": "8.0.15.0",
+            "fileVersion": "8.0.1525.16505"
           }
         },
         "compile": {
           "lib/net8.0/Microsoft.AspNetCore.Mvc.Testing.dll": {}
         }
       },
-      "Microsoft.AspNetCore.TestHost/8.0.19": {
+      "Microsoft.AspNetCore.TestHost/8.0.15": {
         "dependencies": {
           "System.IO.Pipelines": "8.0.0"
         },
         "runtime": {
           "lib/net8.0/Microsoft.AspNetCore.TestHost.dll": {
-            "assemblyVersion": "8.0.19.0",
-            "fileVersion": "8.0.1925.37204"
+            "assemblyVersion": "8.0.15.0",
+            "fileVersion": "8.0.1525.16505"
           }
         },
         "compile": {
@@ -764,7 +889,7 @@
         "dependencies": {
           "Microsoft.Extensions.Caching.Abstractions": "8.0.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2",
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.2",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.3",
           "Microsoft.Extensions.Options": "8.0.2",
           "Microsoft.Extensions.Primitives": "8.0.0"
         },
@@ -937,7 +1062,7 @@
           "Microsoft.Extensions.FileProviders.Physical": "8.0.0",
           "Microsoft.Extensions.Hosting.Abstractions": "8.0.1",
           "Microsoft.Extensions.Logging": "8.0.1",
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.2",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.3",
           "Microsoft.Extensions.Logging.Configuration": "8.0.1",
           "Microsoft.Extensions.Logging.Console": "8.0.1",
           "Microsoft.Extensions.Logging.Debug": "8.0.1",
@@ -958,7 +1083,7 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2",
           "Microsoft.Extensions.Diagnostics.Abstractions": "8.0.1",
           "Microsoft.Extensions.FileProviders.Abstractions": "8.0.0",
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.2"
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.3"
         },
         "runtime": {
           "lib/net8.0/Microsoft.Extensions.Hosting.Abstractions.dll": {
@@ -970,7 +1095,7 @@
       "Microsoft.Extensions.Logging/8.0.1": {
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection": "8.0.1",
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.2",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.3",
           "Microsoft.Extensions.Options": "8.0.2"
         },
         "runtime": {
@@ -980,14 +1105,14 @@
           }
         }
       },
-      "Microsoft.Extensions.Logging.Abstractions/8.0.2": {
+      "Microsoft.Extensions.Logging.Abstractions/8.0.3": {
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2"
         },
         "runtime": {
           "lib/net8.0/Microsoft.Extensions.Logging.Abstractions.dll": {
             "assemblyVersion": "8.0.0.0",
-            "fileVersion": "8.0.1024.46610"
+            "fileVersion": "8.0.1325.6609"
           }
         }
       },
@@ -998,7 +1123,7 @@
           "Microsoft.Extensions.Configuration.Binder": "8.0.2",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2",
           "Microsoft.Extensions.Logging": "8.0.1",
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.2",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.3",
           "Microsoft.Extensions.Options": "8.0.2",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "8.0.0"
         },
@@ -1013,7 +1138,7 @@
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2",
           "Microsoft.Extensions.Logging": "8.0.1",
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.2",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.3",
           "Microsoft.Extensions.Logging.Configuration": "8.0.1",
           "Microsoft.Extensions.Options": "8.0.2"
         },
@@ -1028,7 +1153,7 @@
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2",
           "Microsoft.Extensions.Logging": "8.0.1",
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.2"
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.3"
         },
         "runtime": {
           "lib/net8.0/Microsoft.Extensions.Logging.Debug.dll": {
@@ -1041,7 +1166,7 @@
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2",
           "Microsoft.Extensions.Logging": "8.0.1",
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.2",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.3",
           "Microsoft.Extensions.Options": "8.0.2",
           "System.Diagnostics.EventLog": "8.0.1"
         },
@@ -1056,7 +1181,7 @@
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2",
           "Microsoft.Extensions.Logging": "8.0.1",
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.2",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.3",
           "Microsoft.Extensions.Options": "8.0.2",
           "Microsoft.Extensions.Primitives": "8.0.0"
         },
@@ -1621,6 +1746,28 @@
           "lib/net8.0/RBush.dll": {}
         }
       },
+      "Respawn/7.0.0": {
+        "runtime": {
+          "lib/netstandard2.1/Respawn.dll": {
+            "assemblyVersion": "7.0.0.0",
+            "fileVersion": "7.0.0.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.1/Respawn.dll": {}
+        }
+      },
+      "SharpZipLib/1.4.2": {
+        "runtime": {
+          "lib/net6.0/ICSharpCode.SharpZipLib.dll": {
+            "assemblyVersion": "1.4.2.13",
+            "fileVersion": "1.4.2.13"
+          }
+        },
+        "compile": {
+          "lib/net6.0/ICSharpCode.SharpZipLib.dll": {}
+        }
+      },
       "SixLabors.Fonts/1.0.0": {
         "runtime": {
           "lib/netcoreapp3.1/SixLabors.Fonts.dll": {
@@ -1777,6 +1924,21 @@
         },
         "compile": {
           "lib/net6.0/SQLitePCLRaw.provider.e_sqlite3.dll": {}
+        }
+      },
+      "SSH.NET/2026.0.0": {
+        "dependencies": {
+          "BouncyCastle.Cryptography": "2.7.0",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.3"
+        },
+        "runtime": {
+          "lib/net8.0/Renci.SshNet.dll": {
+            "assemblyVersion": "2026.0.0.1",
+            "fileVersion": "2026.0.0.1"
+          }
+        },
+        "compile": {
+          "lib/net8.0/Renci.SshNet.dll": {}
         }
       },
       "Swashbuckle.AspNetCore/6.6.2": {
@@ -2031,6 +2193,38 @@
             "assemblyVersion": "6.0.0.0",
             "fileVersion": "6.0.21.52210"
           }
+        }
+      },
+      "Testcontainers/4.14.0": {
+        "dependencies": {
+          "Docker.DotNet.Enhanced": "4.3.3",
+          "Docker.DotNet.Enhanced.X509": "4.3.3",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.3",
+          "SSH.NET": "2026.0.0",
+          "SharpZipLib": "1.4.2"
+        },
+        "runtime": {
+          "lib/net8.0/Testcontainers.dll": {
+            "assemblyVersion": "4.14.0.0",
+            "fileVersion": "4.14.0.0"
+          }
+        },
+        "compile": {
+          "lib/net8.0/Testcontainers.dll": {}
+        }
+      },
+      "Testcontainers.MsSql/4.14.0": {
+        "dependencies": {
+          "Testcontainers": "4.14.0"
+        },
+        "runtime": {
+          "lib/net8.0/Testcontainers.MsSql.dll": {
+            "assemblyVersion": "4.14.0.0",
+            "fileVersion": "4.14.0.0"
+          }
+        },
+        "compile": {
+          "lib/net8.0/Testcontainers.MsSql.dll": {}
         }
       },
       "xunit/2.9.3": {
@@ -3946,6 +4140,13 @@
       "path": "azure.identity/1.11.4",
       "hashPath": "azure.identity.1.11.4.nupkg.sha512"
     },
+    "BouncyCastle.Cryptography/2.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-U+12df8UEWHgBi04YVf/Lgi2dy3SItlIYvHjjEVa/BngCQIzDCDRBk50DDByCfDvSbe5pRNFr3b7UrVK2kMcLw==",
+      "path": "bouncycastle.cryptography/2.7.0",
+      "hashPath": "bouncycastle.cryptography.2.7.0.nupkg.sha512"
+    },
     "Castle.Core/5.1.1": {
       "type": "package",
       "serviceable": true,
@@ -3966,6 +4167,55 @@
       "sha512": "sha512-ngTqjYreDYNytG1W5d3ewHsw0ukmmrgV7EKnS4/40rXoYZGt07jrBvo+N+GxT49rcageUMUiprV0jYT4nwVBHQ==",
       "path": "closedxml.parser/2.0.0",
       "hashPath": "closedxml.parser.2.0.0.nupkg.sha512"
+    },
+    "Docker.DotNet.Enhanced/4.3.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-nGicLwvd42FhRk+khY5uS6cx49ErNdwYKnYBg0F4m4BDKLp/R77AVmmN9xAiqI3W/wN5ZCHkdUhgxf5ORkZuFQ==",
+      "path": "docker.dotnet.enhanced/4.3.3",
+      "hashPath": "docker.dotnet.enhanced.4.3.3.nupkg.sha512"
+    },
+    "Docker.DotNet.Enhanced.Handler.Abstractions/4.3.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-9Cp8hOgtynixcDoAs9lnEaQosluojSYmiW3fsLsLIVfZjlq/fznSIZNUhnmyT4Xo1Iyuok/y49WL/25O47u0Pw==",
+      "path": "docker.dotnet.enhanced.handler.abstractions/4.3.3",
+      "hashPath": "docker.dotnet.enhanced.handler.abstractions.4.3.3.nupkg.sha512"
+    },
+    "Docker.DotNet.Enhanced.LegacyHttp/4.3.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-7j3M16emv9PAQN7VwFn23xLYNj8GJmwPOcogveHkaWnOCqiC+anRaNKQwqIBNApM1AuwZKivehTKTPmmrjUUnw==",
+      "path": "docker.dotnet.enhanced.legacyhttp/4.3.3",
+      "hashPath": "docker.dotnet.enhanced.legacyhttp.4.3.3.nupkg.sha512"
+    },
+    "Docker.DotNet.Enhanced.NativeHttp/4.3.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-iNzK+jRFeEMobSA7l/h4ARwCKOOefOWtVN5/RB0ft6/6H6IQXvVUuOgGyZAjYLBT7TsyClRYno2B904f3dtBuQ==",
+      "path": "docker.dotnet.enhanced.nativehttp/4.3.3",
+      "hashPath": "docker.dotnet.enhanced.nativehttp.4.3.3.nupkg.sha512"
+    },
+    "Docker.DotNet.Enhanced.NPipe/4.3.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ZTLYufuEfY0e6qLOgeH9QgXx2KYuoABRVaY5A8rsggyLgYqbDj9rCRfVAhHPCUv83S7pVxDHy+Tvm/BnxjWVpg==",
+      "path": "docker.dotnet.enhanced.npipe/4.3.3",
+      "hashPath": "docker.dotnet.enhanced.npipe.4.3.3.nupkg.sha512"
+    },
+    "Docker.DotNet.Enhanced.Unix/4.3.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ypo8qNbmvHw1t9VfpRTMogCw2vht6VjkXzlGYUUeP2H2bf83USURdla1maW1njn2oq2rfLUFOGMfmt+A37QU2w==",
+      "path": "docker.dotnet.enhanced.unix/4.3.3",
+      "hashPath": "docker.dotnet.enhanced.unix.4.3.3.nupkg.sha512"
+    },
+    "Docker.DotNet.Enhanced.X509/4.3.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-oBDibWezEv4hgj3RIQxI3DVcxkNV1MdrD0d/jhjUu+h3DL+qc0wlkQva15kkwMatXmC/hWp1VP0DMoFXe+BmEw==",
+      "path": "docker.dotnet.enhanced.x509/4.3.3",
+      "hashPath": "docker.dotnet.enhanced.x509.4.3.3.nupkg.sha512"
     },
     "DocumentFormat.OpenXml/3.1.1": {
       "type": "package",
@@ -4016,19 +4266,19 @@
       "path": "microsoft.aspnetcore.authentication.jwtbearer/8.0.19",
       "hashPath": "microsoft.aspnetcore.authentication.jwtbearer.8.0.19.nupkg.sha512"
     },
-    "Microsoft.AspNetCore.Mvc.Testing/8.0.19": {
+    "Microsoft.AspNetCore.Mvc.Testing/8.0.15": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-KeVY5Hp8sghfQd/YrZYiVeTi3bvPQGnucuUWWDlXkTQMm2TumXWdp44roF77D1vwH5eQrgUbNEmPwWNe1S013g==",
-      "path": "microsoft.aspnetcore.mvc.testing/8.0.19",
-      "hashPath": "microsoft.aspnetcore.mvc.testing.8.0.19.nupkg.sha512"
+      "sha512": "sha512-+dtvv9riqNHMYIUUOXfCXROw+5Gga+z9lo6aqWal7sYdPWfEo+IwjaXAHPH4E5H8kGOMcxoux+oqb/4dBLedWA==",
+      "path": "microsoft.aspnetcore.mvc.testing/8.0.15",
+      "hashPath": "microsoft.aspnetcore.mvc.testing.8.0.15.nupkg.sha512"
     },
-    "Microsoft.AspNetCore.TestHost/8.0.19": {
+    "Microsoft.AspNetCore.TestHost/8.0.15": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-iTKZC+re7D1GRYIltORRTONhX9sZ8AbIU2QFP+2eLneACdKoARGla/zuQq7U0jvekd/nNJxZM2rwn98mKnGDPw==",
-      "path": "microsoft.aspnetcore.testhost/8.0.19",
-      "hashPath": "microsoft.aspnetcore.testhost.8.0.19.nupkg.sha512"
+      "sha512": "sha512-cBGR2ibSZB9HENyWoSnY69nd6rdJcnfyt1gaACSsmepKby6u6Ww9dEiBvX3Mf50SftLFSxymBpo1m9GKU8P8Kw==",
+      "path": "microsoft.aspnetcore.testhost/8.0.15",
+      "hashPath": "microsoft.aspnetcore.testhost.8.0.15.nupkg.sha512"
     },
     "Microsoft.Bcl.AsyncInterfaces/1.1.1": {
       "type": "package",
@@ -4275,12 +4525,12 @@
       "path": "microsoft.extensions.logging/8.0.1",
       "hashPath": "microsoft.extensions.logging.8.0.1.nupkg.sha512"
     },
-    "Microsoft.Extensions.Logging.Abstractions/8.0.2": {
+    "Microsoft.Extensions.Logging.Abstractions/8.0.3": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-nroMDjS7hNBPtkZqVBbSiQaQjWRDxITI8Y7XnDs97rqG3EbzVTNLZQf7bIeUJcaHOV8bca47s1Uxq94+2oGdxA==",
-      "path": "microsoft.extensions.logging.abstractions/8.0.2",
-      "hashPath": "microsoft.extensions.logging.abstractions.8.0.2.nupkg.sha512"
+      "sha512": "sha512-dL0QGToTxggRLMYY4ZYX5AMwBb+byQBd/5dMiZE07Nv73o6I5Are3C7eQTh7K2+A4ct0PVISSr7TZANbiNb2yQ==",
+      "path": "microsoft.extensions.logging.abstractions/8.0.3",
+      "hashPath": "microsoft.extensions.logging.abstractions.8.0.3.nupkg.sha512"
     },
     "Microsoft.Extensions.Logging.Configuration/8.0.1": {
       "type": "package",
@@ -4457,6 +4707,20 @@
       "path": "rbush.signed/4.0.0",
       "hashPath": "rbush.signed.4.0.0.nupkg.sha512"
     },
+    "Respawn/7.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-AyWlducZGOnmlEVz4PaL3Qv8wcY3ClPZS9CrlDnSVahGd/E9tTEgSFiC8yoV/F6o6P6IYm8xnHFa/vmWT8tfcw==",
+      "path": "respawn/7.0.0",
+      "hashPath": "respawn.7.0.0.nupkg.sha512"
+    },
+    "SharpZipLib/1.4.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-yjj+3zgz8zgXpiiC3ZdF/iyTBbz2fFvMxZFEBPUcwZjIvXOf37Ylm+K58hqMfIBt5JgU/Z2uoUS67JmTLe973A==",
+      "path": "sharpziplib/1.4.2",
+      "hashPath": "sharpziplib.1.4.2.nupkg.sha512"
+    },
     "SixLabors.Fonts/1.0.0": {
       "type": "package",
       "serviceable": true,
@@ -4491,6 +4755,13 @@
       "sha512": "sha512-PQ2Oq3yepLY4P7ll145P3xtx2bX8xF4PzaKPRpw9jZlKvfe4LE/saAV82inND9usn1XRpmxXk7Lal3MTI+6CNg==",
       "path": "sqlitepclraw.provider.e_sqlite3/2.1.6",
       "hashPath": "sqlitepclraw.provider.e_sqlite3.2.1.6.nupkg.sha512"
+    },
+    "SSH.NET/2026.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Yu9dirPq8l3oaat0+OQ7K0nUf5MmYltpia5UGqsApTG4zTPvBC1cxbNnC3NERij26dUST0A3Ef1QdHSn5ArbWQ==",
+      "path": "ssh.net/2026.0.0",
+      "hashPath": "ssh.net.2026.0.0.nupkg.sha512"
     },
     "Swashbuckle.AspNetCore/6.6.2": {
       "type": "package",
@@ -4687,6 +4958,20 @@
       "sha512": "sha512-IXoJOXIqc39AIe+CIR7koBtRGMiCt/LPM3lI+PELtDIy9XdyeSrwXFdWV9dzJ2Awl0paLWUaknLxFQ5HpHZUog==",
       "path": "system.windows.extensions/6.0.0",
       "hashPath": "system.windows.extensions.6.0.0.nupkg.sha512"
+    },
+    "Testcontainers/4.14.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ojuBi91xcMsR6vnFuNsQDWU9tlZlrtmqy95VPNWVVnh24GiwFL/WMnVmb6bRv8LqovtnKPJN9cpmH1k02Z4ZoA==",
+      "path": "testcontainers/4.14.0",
+      "hashPath": "testcontainers.4.14.0.nupkg.sha512"
+    },
+    "Testcontainers.MsSql/4.14.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-RNKuun0TUJahHUdxClEp4t4vUrZETHfgpXoicDMS5Wf04oaAYkjz2xCSvo0tzWFpcyGyB1obNusI9P4A4zVDyQ==",
+      "path": "testcontainers.mssql/4.14.0",
+      "hashPath": "testcontainers.mssql.4.14.0.nupkg.sha512"
     },
     "xunit/2.9.3": {
       "type": "package",

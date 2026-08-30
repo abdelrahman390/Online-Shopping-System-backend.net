@@ -163,7 +163,7 @@ namespace Online_Shopping_System.Controllers
 
                 _dbContext.Products.Add(newProduct);
 
-                _dbContext.SaveChangesAsync();
+                 await _dbContext.SaveChangesAsync();
 
                 return Ok(new
                 {
@@ -186,8 +186,8 @@ namespace Online_Shopping_System.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
-            var products =  _dbContext.Products
-                .ToList();
+            var products = await _dbContext.Products
+                .ToListAsync();
 
             var result = products.Select(product => new
             {

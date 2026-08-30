@@ -3,7 +3,7 @@ using Moq;
 using Moq.Protected;
 using Xunit;
 
-namespace Online_Shopping_SystemTests.Services
+namespace Online_Shopping_System.Services
 {
 
     public class EmailServiceTests

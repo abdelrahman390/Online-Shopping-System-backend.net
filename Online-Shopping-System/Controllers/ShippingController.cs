@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Online_Shopping_System.Data;
 using System.Security.Claims;
+using System.Threading.Tasks;
 //using Microsoft.AspNetCore.Mvc;
 //using Microsoft.Data.SqlClient;
 //using Microsoft.EntityFrameworkCore;
@@ -33,7 +35,7 @@ namespace Online_Shopping_System.Controllers
 
         [Authorize]
         [HttpGet("getShippingTypes")]
-        public IActionResult GetShippingTypes()
+        public async Task<IActionResult> GetShippingTypes()
         {
 
             try
@@ -47,7 +49,7 @@ namespace Online_Shopping_System.Controllers
                     return Unauthorized("Missing data in the token.");
                 }
 
-                var cart = _dbContext.ShippingTypes.ToList();
+                var cart = await _dbContext.ShippingTypes.ToListAsync();
 
                 return Ok(
                     cart

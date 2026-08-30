@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Online_Shopping_System.Tests
+namespace Online_Shopping_System.Tests.Controllers
 {
     // NOTE: SqliteContextFixture is created fresh per test (xUnit makes a new
     // test class instance per [Fact]), so there's no cross-test state leak.

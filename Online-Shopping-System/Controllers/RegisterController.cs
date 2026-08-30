@@ -165,7 +165,12 @@ namespace market_watch.Controllers
 
                 //_AuditLogsService.Log(user.UserId, "login", "Users", DateTime.Now, userIpAdress);
 
-                return Ok($"Logged in successfuly. Token: {token}");
+                //return Ok($"Logged in successfuly. Token: {token}");
+                return Ok(new
+                {
+                    message = "Logged in successfully.",
+                    token = token
+                });
 
             }
             catch (Exception ex)

@@ -6,7 +6,7 @@
 //using System.Threading.Tasks;
 //using Xunit;
 
-//namespace Online_Shopping_System.Tests
+//namespace Online_Shopping_System.Tests.Controllers
 //{
 //    // Assumes ReportService has been refactored behind an IReportService
 //    // interface (see TESTING_GUIDE.md, section 2), and ReportsController's

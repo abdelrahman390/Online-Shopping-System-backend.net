@@ -6,6 +6,7 @@ using Online_Shopping_System.Models.Carts;
 using Online_Shopping_System.Models.Orders;
 using Online_Shopping_System.Models.Shipping;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Online_Shopping_System.Controllers
 {
@@ -27,18 +28,6 @@ namespace Online_Shopping_System.Controllers
         [HttpPost("confirmOrder")]
         public async Task<IActionResult> ConfirmOrder(int shippingTypeId)
         {
-            /*
-             info: Online-Shopping-System[0]
-              POST /Order/confirmOrder responded 200 in 171 ms
-             --
-            info: Online-Shopping-System[0]
-            POST /Order/confirmOrder responded 500 in 392 ms
-
-            ------- after --------
-            info: Online-Shopping-System[0]
-              POST /Order/confirmOrder responded 500 in 541 ms
-
-             */
             using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
@@ -108,7 +97,7 @@ namespace Online_Shopping_System.Controllers
 
         [Authorize]
         [HttpGet("getOrders")]
-        public IActionResult getOrders()
+        public async Task<IActionResult> getOrders()
         {
 
             try
@@ -122,7 +111,7 @@ namespace Online_Shopping_System.Controllers
                     return Unauthorized("Missing data in the token.");
                 }
 
-                var orders = _dbContext.Orders.Where(c => c.UserId == int.Parse(userIdClaim.Value)).ToList();
+                var orders = await _dbContext.Orders.Where(c => c.UserId == int.Parse(userIdClaim.Value)).ToListAsync();
 
                 return Ok(orders);
 
@@ -140,7 +129,7 @@ namespace Online_Shopping_System.Controllers
 
         [Authorize]
         [HttpGet("getUserUnpaidOrder")]
-        public IActionResult getUserUnpaidOrder()
+        public async Task<IActionResult> getUserUnpaidOrder()
         {
 
             try
@@ -154,7 +143,7 @@ namespace Online_Shopping_System.Controllers
                     return Unauthorized("Missing data in the token.");
                 }
 
-                var order = _dbContext.Orders.FirstOrDefault(c => c.UserId == int.Parse(userIdClaim.Value) && c.OrderStatus == "Pending");
+                var order = await _dbContext.Orders.FirstOrDefaultAsync(c => c.UserId == int.Parse(userIdClaim.Value) && c.OrderStatus == "Pending");
 
                 return Ok(order);
 

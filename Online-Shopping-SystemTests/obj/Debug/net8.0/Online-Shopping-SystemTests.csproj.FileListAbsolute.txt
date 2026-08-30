@@ -775,3 +775,17 @@ E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-
 E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\Microsoft.Extensions.Logging.EventSource.dll
 E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\System.Diagnostics.EventLog.dll
 E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.dll
+E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
+E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\Docker.DotNet.dll
+E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\Docker.DotNet.Handler.Abstractions.dll
+E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\Docker.DotNet.LegacyHttp.dll
+E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\Microsoft.Net.Http.Client.dll
+E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\Docker.DotNet.NativeHttp.dll
+E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\Docker.DotNet.NPipe.dll
+E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\Docker.DotNet.Unix.dll
+E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\Docker.DotNet.X509.dll
+E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\Respawn.dll
+E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\ICSharpCode.SharpZipLib.dll
+E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\Renci.SshNet.dll
+E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\Testcontainers.dll
+E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\Testcontainers.MsSql.dll

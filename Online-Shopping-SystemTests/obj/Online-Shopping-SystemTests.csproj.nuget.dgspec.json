@@ -60,7 +60,7 @@
             },
             "Microsoft.AspNetCore.Mvc.Testing": {
               "target": "Package",
-              "version": "[8.0.19, )"
+              "version": "[8.0.15, )"
             },
             "Microsoft.EntityFrameworkCore.InMemory": {
               "target": "Package",
@@ -77,6 +77,14 @@
             "Moq": {
               "target": "Package",
               "version": "[4.20.72, )"
+            },
+            "Respawn": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "Testcontainers.MsSql": {
+              "target": "Package",
+              "version": "[4.14.0, )"
             },
             "xunit": {
               "target": "Package",

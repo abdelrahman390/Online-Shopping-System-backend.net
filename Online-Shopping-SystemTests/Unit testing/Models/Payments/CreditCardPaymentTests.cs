@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Online_Shopping_SystemTests.Unit_testing.Models.Payments
+namespace Online_Shopping_System.Tests.Unit_testing.Models.Payments
 {
     public class CreditCardPaymentTests
     {

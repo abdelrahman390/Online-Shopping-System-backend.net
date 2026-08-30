@@ -55,15 +55,12 @@ namespace Online_Shopping_System.Controllers
 
                 //var sw = Stopwatch.StartNew();
 
-                var userId = int.Parse(userIdClaim.Value);
-
-                //Console.WriteLine($"user Id change: {sw.ElapsedMilliseconds} ms");
-                //sw.Restart();
 
                 if (userIdClaim == null)
                 {
                     return Unauthorized("Missing data in the token.");
                 }
+                var userId = int.Parse(userIdClaim.Value);
 
                 if (quantity <= 0)
                 {
@@ -171,7 +168,7 @@ namespace Online_Shopping_System.Controllers
 
         [Authorize]
         [HttpGet("previewCart")]
-        public IActionResult PreviewCart()
+        public async Task<IActionResult> PreviewCart()
         {
             try
             {
@@ -185,7 +182,7 @@ namespace Online_Shopping_System.Controllers
                     return Unauthorized("Missing data in the token.");
                 }
 
-                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.UserId == userId && c.CartStatus == "Pending");
+                Cart cart = await _dbContext.Carts.FirstOrDefaultAsync(c => c.UserId == userId && c.CartStatus == "Pending");
 
                 if(cart == null)
                 {
@@ -202,7 +199,7 @@ namespace Online_Shopping_System.Controllers
                         i.TotalPrice,
                         ItemPrice = i.Product.Price
                     })
-                    .ToList();
+                    .ToListAsync();
 
                 return Ok(
                     cartItems
