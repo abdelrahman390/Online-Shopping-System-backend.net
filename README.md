@@ -6,3 +6,5 @@
 * 🛡️ **Implemented secure authentication and authorization** using JWT authentication, Argon2id password hashing, role-based authorization, and rate-limiting middleware for secure user management.
 
 * 🧪 **Developed 105+ automated tests** across unit, integration, and E2E testing using **xUnit, Moq, FluentAssertions, Selenium, and Coverlet**, achieving **92% code coverage**.
+
+* Designed a modular MVC structure, increasing maintainability and enabling fast addition of new features.
