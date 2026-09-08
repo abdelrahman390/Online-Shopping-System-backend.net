@@ -45,6 +45,7 @@
           "Online-Shopping-System": "1.0.0",
           "Respawn": "7.0.0",
           "Testcontainers.MsSql": "4.14.0",
+          "coverlet.collector": "10.0.1",
           "xunit": "2.9.3",
           "xunit.runner.visualstudio": "4.0.0",
           "Microsoft.AspNetCore.Antiforgery": "8.0.0.0",
@@ -451,6 +452,7 @@
           "lib/netstandard2.1/ClosedXML.Parser.dll": {}
         }
       },
+      "coverlet.collector/10.0.1": {},
       "Docker.DotNet.Enhanced/4.3.3": {
         "dependencies": {
           "Docker.DotNet.Enhanced.Handler.Abstractions": "4.3.3",
@@ -4167,6 +4169,13 @@
       "sha512": "sha512-ngTqjYreDYNytG1W5d3ewHsw0ukmmrgV7EKnS4/40rXoYZGt07jrBvo+N+GxT49rcageUMUiprV0jYT4nwVBHQ==",
       "path": "closedxml.parser/2.0.0",
       "hashPath": "closedxml.parser.2.0.0.nupkg.sha512"
+    },
+    "coverlet.collector/10.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-27jXSV/0DbVqF5jDrAxuQFZ9oaz6gmG03p8ttxAFk+X0M4woFYj7MoWDLCna5EGLb0CE6OE7X6ZH3Wt5smTtaA==",
+      "path": "coverlet.collector/10.0.1",
+      "hashPath": "coverlet.collector.10.0.1.nupkg.sha512"
     },
     "Docker.DotNet.Enhanced/4.3.3": {
       "type": "package",

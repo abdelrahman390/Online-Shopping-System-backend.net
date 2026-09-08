@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Memory;
 using Online_Shopping_System.Data;
 using Online_Shopping_System.Models.Carts;
 using Online_Shopping_System.Models.Orders;
 using Online_Shopping_System.Models.Shipping;
 using System.Security.Claims;
-using System.Threading.Tasks;
+//using System.Threading.Tasks;
 
 namespace Online_Shopping_System.Controllers
 {
@@ -16,15 +19,17 @@ namespace Online_Shopping_System.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly OnlineShoppingContext _dbContext;
+        private readonly IMemoryCache _cache;
 
-        public OrderController(IConfiguration configuration, OnlineShoppingContext dbContext)
+        public OrderController(IConfiguration configuration, OnlineShoppingContext dbContext, IMemoryCache cache)
         {
             _configuration = configuration;
             _dbContext = dbContext;
+            _cache = cache;
         }
 
-
         [Authorize]
+        //[EnableRateLimiting("checkout")]
         [HttpPost("confirmOrder")]
         public async Task<IActionResult> ConfirmOrder(int shippingTypeId)
         {
@@ -48,10 +53,24 @@ namespace Online_Shopping_System.Controllers
                     return BadRequest($"Cart not found. {userId} - {shippingTypeId}");
                 }
 
+                //ShippingType ShippingType = await _dbContext.ShippingTypes.FirstOrDefaultAsync(s => s.ShippingTypeId == shippingTypeId);
+                var cacheKey = $"shipping-type:{shippingTypeId}";
 
-                ShippingType ShippingType = await _dbContext.ShippingTypes.FirstOrDefaultAsync(s => s.ShippingTypeId == shippingTypeId);
+                ShippingType? shippingType = await _cache.GetOrCreateAsync(
+                    cacheKey,
+                    async entry =>
+                    {
+                        entry.AbsoluteExpirationRelativeToNow =
+                            TimeSpan.FromMinutes(30);
 
-                if (ShippingType == null)
+                        return await _dbContext.ShippingTypes
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(
+                                s => s.ShippingTypeId == shippingTypeId);
+                    });
+
+
+                if (shippingType == null)
                 {
                     return BadRequest("Shipping Type not found.");
                 }
@@ -62,7 +81,7 @@ namespace Online_Shopping_System.Controllers
                     UserId = userId,
                     OrderStatus = "Pending",
                     CreatedAt = DateTimeOffset.Now,
-                    TotalCost = cart.TotalPrice + ShippingType.ShippingCost
+                    TotalCost = cart.TotalPrice + shippingType.ShippingCost
                 };
                 _dbContext.Orders.Add(order);
                 await _dbContext.SaveChangesAsync();
@@ -70,7 +89,7 @@ namespace Online_Shopping_System.Controllers
                 ShippingRecords newShippingRecord = new ShippingRecords
                 {
                     OrderId = order.OrderId,
-                    ShippingTypeId = ShippingType.ShippingTypeId,
+                    ShippingTypeId = shippingType.ShippingTypeId,
                     ShippingAddress = "Test Address from payment controller"
                 };
 
@@ -86,7 +105,7 @@ namespace Online_Shopping_System.Controllers
             {
                 await transaction.RollbackAsync();
 
-                Console.WriteLine($"Error: {ex.Message}");
+                //Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,
                     $"Error: {ex.Message}"
@@ -103,22 +122,22 @@ namespace Online_Shopping_System.Controllers
             try
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
-                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                if (userIdClaim == null)
                 {
                     return Unauthorized("Missing data in the token.");
                 }
 
-                var orders = await _dbContext.Orders.Where(c => c.UserId == int.Parse(userIdClaim.Value)).ToListAsync();
+                var orders = await _dbContext.Orders.AsNoTracking().Where(c => c.UserId == int.Parse(userIdClaim.Value)).ToListAsync();
 
                 return Ok(orders);
 
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                //Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,
                     $"Error: {ex.Message}"
@@ -135,22 +154,22 @@ namespace Online_Shopping_System.Controllers
             try
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
-                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                if (userIdClaim == null)
                 {
                     return Unauthorized("Missing data in the token.");
                 }
 
-                var order = await _dbContext.Orders.FirstOrDefaultAsync(c => c.UserId == int.Parse(userIdClaim.Value) && c.OrderStatus == "Pending");
+                var order = await _dbContext.Orders.AsNoTracking().FirstOrDefaultAsync(c => c.UserId == int.Parse(userIdClaim.Value) && c.OrderStatus == "Pending");
 
                 return Ok(order);
 
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                //Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,
                     $"Error: {ex.Message}"

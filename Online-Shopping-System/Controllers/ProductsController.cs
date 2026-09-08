@@ -186,7 +186,7 @@ namespace Online_Shopping_System.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
-            var products = await _dbContext.Products
+            var products = await _dbContext.Products.AsNoTracking()
                 .ToListAsync();
 
             var result = products.Select(product => new

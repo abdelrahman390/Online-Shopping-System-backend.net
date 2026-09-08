@@ -107,7 +107,7 @@ namespace Online_Shopping_System.Controllers
             {
                 await transaction.RollbackAsync();
 
-                Console.WriteLine($"Error: {ex.Message}");
+                //Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,
                     $"Error: {ex.Message}"
@@ -123,10 +123,10 @@ namespace Online_Shopping_System.Controllers
             try
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
-                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                if (userIdClaim == null)
                 {
                     return Unauthorized("Missing data in the token.");
                 }
@@ -161,7 +161,7 @@ namespace Online_Shopping_System.Controllers
 
                 _dbContext.Payments.Add(creditCardPayment);
 
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
 
                 User user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserId == int.Parse(userIdClaim.Value));
 
@@ -187,7 +187,7 @@ namespace Online_Shopping_System.Controllers
             {
                 await transaction.RollbackAsync();
 
-                Console.WriteLine($"Error: {ex.Message}");
+                //Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,
                     $"Error: {ex.Message}"
@@ -203,10 +203,10 @@ namespace Online_Shopping_System.Controllers
             try
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
-                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                if (userIdClaim == null)
                 {
                     return Unauthorized("Missing data in the token.");
                 }
@@ -245,7 +245,7 @@ namespace Online_Shopping_System.Controllers
                 order.PaymentTypeName = "Wallet";
                 cart.CartStatus = "Confirmed";
 
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
 
                 User user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserId == int.Parse(userIdClaim.Value));
 
@@ -265,7 +265,7 @@ namespace Online_Shopping_System.Controllers
             {
 
                 await transaction.RollbackAsync();
-                Console.WriteLine($"Error: {ex.Message}");
+                //Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,
                     $"Error: {ex.Message}"

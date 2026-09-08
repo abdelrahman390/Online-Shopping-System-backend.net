@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Online_Shopping_System.Services;
 using Microsoft.AspNetCore.Authorization;
+using QuestPDF.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Online_Shopping_System.Models.Carts;
 using Online_Shopping_System.Models.Orders;
@@ -18,6 +19,7 @@ public class ReportsController : ControllerBase
     public ReportsController(ReportService reportService)
     {
         _reportService = reportService;
+        QuestPDF.Settings.License = LicenseType.Evaluation;
     }
 
     [Authorize(Roles = "Admin")]

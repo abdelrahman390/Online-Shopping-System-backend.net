@@ -41,15 +41,15 @@ namespace Online_Shopping_System.Controllers
             try
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
-                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                if (userIdClaim == null)
                 {
                     return Unauthorized("Missing data in the token.");
                 }
 
-                var cart = await _dbContext.ShippingTypes.ToListAsync();
+                var cart = await _dbContext.ShippingTypes.AsNoTracking().ToListAsync();
 
                 return Ok(
                     cart
@@ -58,7 +58,7 @@ namespace Online_Shopping_System.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                //Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,
                     $"Error: {ex.Message}"

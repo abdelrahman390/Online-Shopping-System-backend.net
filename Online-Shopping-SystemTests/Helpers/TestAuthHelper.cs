@@ -22,7 +22,7 @@ public static class TestAuthHelper
             issuer: "Online_Shopping_System",
             audience: "Online_Shopping_System-client",
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(60),
+            expires: DateTime.UtcNow.AddHours(1),
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

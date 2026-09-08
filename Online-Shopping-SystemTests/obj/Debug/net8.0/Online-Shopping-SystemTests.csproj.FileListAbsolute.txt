@@ -789,3 +789,4 @@ E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-
 E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\Renci.SshNet.dll
 E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\Testcontainers.dll
 E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\Testcontainers.MsSql.dll
+E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests\bin\Debug\net8.0\CoverletSourceRootsMapping_Online-Shopping-SystemTests

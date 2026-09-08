@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "I6ETVBHu12g=",
+  "dgSpecHash": "uhIqYyQA970=",
   "success": true,
   "projectFilePath": "E:\\Programming\\InternSheps\\FRA 2026\\Projs\\Online Shopping System\\Backend\\Online-Shopping-System-backend.net\\Online-Shopping-SystemTests\\Online-Shopping-SystemTests.csproj",
   "expectedPackageFiles": [
@@ -10,6 +10,7 @@
     "C:\\Users\\hp\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
     "C:\\Users\\hp\\.nuget\\packages\\closedxml\\0.105.1\\closedxml.0.105.1.nupkg.sha512",
     "C:\\Users\\hp\\.nuget\\packages\\closedxml.parser\\2.0.0\\closedxml.parser.2.0.0.nupkg.sha512",
+    "C:\\Users\\hp\\.nuget\\packages\\coverlet.collector\\10.0.1\\coverlet.collector.10.0.1.nupkg.sha512",
     "C:\\Users\\hp\\.nuget\\packages\\docker.dotnet.enhanced\\4.3.3\\docker.dotnet.enhanced.4.3.3.nupkg.sha512",
     "C:\\Users\\hp\\.nuget\\packages\\docker.dotnet.enhanced.handler.abstractions\\4.3.3\\docker.dotnet.enhanced.handler.abstractions.4.3.3.nupkg.sha512",
     "C:\\Users\\hp\\.nuget\\packages\\docker.dotnet.enhanced.legacyhttp\\4.3.3\\docker.dotnet.enhanced.legacyhttp.4.3.3.nupkg.sha512",

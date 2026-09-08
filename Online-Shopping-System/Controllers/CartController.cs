@@ -6,7 +6,8 @@ using Online_Shopping_System.Data;
 using System.Security.Claims;
 using System.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
+using Microsoft.Extensions.Caching.Memory;
+//using System.Diagnostics;
 //using Microsoft.EntityFrameworkCore.Infrastructure;
 //using System.ComponentModel.Design;
 //using System.Linq;
@@ -24,11 +25,13 @@ namespace Online_Shopping_System.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly OnlineShoppingContext _dbContext;
+        private readonly IMemoryCache _cache;
 
-        public CartController(IConfiguration configuration, OnlineShoppingContext dbContext)
+        public CartController(IConfiguration configuration, OnlineShoppingContext dbContext, IMemoryCache cache)
         {
             _configuration = configuration;
             _dbContext = dbContext;
+            _cache = cache;
         }
 
         [Authorize]
@@ -79,14 +82,24 @@ namespace Online_Shopping_System.Controllers
                 if (affectedRows == 0)
                 {
                     // Product doesn't exist OR insufficient quantity
-                    return BadRequest("Insufficient product quantity.");
+                    return NotFound("Insufficient product quantity.");
                 }
 
                 //Product product = await _dbContext.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
-                var price = await _dbContext.Products
-                    .Where(p => p.ProductId == productId)
-                    .Select(p => p.Price)
-                    .SingleAsync();
+                var cacheKey = $"product-price:{productId}";
+
+                var price = await _cache.GetOrCreateAsync(
+                    cacheKey,
+                    async entry =>
+                    {
+                        entry.AbsoluteExpirationRelativeToNow =
+                            TimeSpan.FromMinutes(5);
+
+                        return await _dbContext.Products
+                            .Where(p => p.ProductId == productId)
+                            .Select(p => p.Price)
+                            .SingleAsync();
+                    });
 
                 //Console.WriteLine($"product price DB query: {sw.ElapsedMilliseconds} ms");
                 //sw.Restart();
@@ -157,7 +170,7 @@ namespace Online_Shopping_System.Controllers
             {
                 await transaction.RollbackAsync();
 
-                Console.WriteLine($"Error: {ex.Message}");
+                //Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,
                     $"Error: {ex.Message}"
@@ -173,23 +186,24 @@ namespace Online_Shopping_System.Controllers
             try
             {
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                var userRoleClaim = User.FindFirst(ClaimTypes.Role);
-                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
+                //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
                 var userId = int.Parse(userIdClaim.Value);
 
-                if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
+                if (userIdClaim == null)
                 {
                     return Unauthorized("Missing data in the token.");
                 }
 
-                Cart cart = await _dbContext.Carts.FirstOrDefaultAsync(c => c.UserId == userId && c.CartStatus == "Pending");
+                Cart cart = await _dbContext.Carts.AsNoTracking().FirstOrDefaultAsync(c => c.UserId == userId && c.CartStatus == "Pending");
 
                 if(cart == null)
                 {
-                    return Ok(new List<object>());
+                    return NotFound(new List<object>());
                 }
 
-                var cartItems = _dbContext.CartItems
+                var cartItems = await _dbContext.CartItems
+                    .AsNoTracking()
                     .Where(i => i.CartId == cart.CartId)
                     .Select(i => new
                     {
@@ -208,7 +222,7 @@ namespace Online_Shopping_System.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                //Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,
                     $"Error: {ex.Message}"

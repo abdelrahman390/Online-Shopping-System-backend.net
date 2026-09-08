@@ -30,7 +30,7 @@ namespace Online_Shopping_System.Data
         // add products
         public void CreateTestProducts()
         {
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 20; i++)
             {
                 Product newElectronic = new Electronics
                 {
@@ -43,7 +43,7 @@ namespace Online_Shopping_System.Data
                 _dbContext.Products.Add(newElectronic);
             }
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 20; i++)
             {
                 Product newBook = new Books
                 {
@@ -51,14 +51,14 @@ namespace Online_Shopping_System.Data
                     Price = 50,
                     Quantity = 10000,
                     Type = "Books",
-                    Author = "Author-" + 1,
-                    ISBN = "ISBN-" + 1
+                    Author = "Author-" + i,
+                    ISBN = "ISBN-" + i
                 };
 
                 _dbContext.Products.Add(newBook);
             }
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 20; i++)
             {
                 Product newClothes = new Clothes
                 {
@@ -86,7 +86,7 @@ namespace Online_Shopping_System.Data
                     UserName = "User" + i.ToString(),
                     Email = "User" + i.ToString() + "@gmail.com",
                     PasswordHashed = Array.Empty<byte>(),
-                    UserTypeId = 1,
+                    UserTypeId = _dbContext.UserTypes.First().UserTypeId,
                     PasswordSalt = Array.Empty<byte>(),
                     UserRole = "User"
                 };

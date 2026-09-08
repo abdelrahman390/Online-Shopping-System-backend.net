@@ -12,7 +12,7 @@ using Online_Shopping_System.Data;
 namespace Online_Shopping_System.Migrations
 {
     [DbContext(typeof(OnlineShoppingContext))]
-    [Migration("20260828125557_InitialCreate")]
+    [Migration("20260906205648_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
