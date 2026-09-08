@@ -9,12 +9,10 @@ namespace Online_Shopping_System.Models.Payment
         public int OrderId { get; set; }
         public decimal Amount { get; set; }
         public string TransactionId { get; set; }
+
         // PaymentType: Cash - CreditCard - Wallet
         public string PaymentType { get; set; }
         public DateTimeOffset? Date { get; set; }
-
-        // PaymentTypeNames: Cash - CreditCard - Wallet
-        //public string PaymentTypeName { get; set; } = "Cash";
 
         // Navigation property
         public Order Order { get; set; }
@@ -23,11 +21,6 @@ namespace Online_Shopping_System.Models.Payment
         //    ["Cash", "CreditCard", "Wallet"];
 
         public abstract bool CollectMoney();
-        //{
-        //    bool validPaymentType = PaymentTypes.Contains(PaymentTypeName);
-
-        //    return validPaymentType;
-        //}
 
     }
 }

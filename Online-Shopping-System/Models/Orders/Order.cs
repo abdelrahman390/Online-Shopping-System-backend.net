@@ -10,7 +10,7 @@ namespace Online_Shopping_System.Models.Orders
         public int OrderId { get; set; }
         public int CartId { get; set; }
         public int UserId { get; set; }
-
+        public DateTimeOffset CreatedAt { get; set; }
         // Status: Pending - Delivered - InProgress
         public string OrderStatus { get; set; }
 

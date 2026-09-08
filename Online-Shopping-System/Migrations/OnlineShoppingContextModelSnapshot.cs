@@ -76,6 +76,9 @@ namespace Online_Shopping_System.Migrations
 
                     b.HasIndex("ProductId");
 
+                    b.HasIndex("CartId", "ProductId")
+                        .IsUnique();
+
                     b.ToTable("CartItems");
                 });
 
@@ -89,6 +92,9 @@ namespace Online_Shopping_System.Migrations
 
                     b.Property<int>("CartId")
                         .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("OrderStatus")
                         .IsRequired()
@@ -136,11 +142,14 @@ namespace Online_Shopping_System.Migrations
 
                     b.Property<string>("TransactionId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("PaymentId");
 
                     b.HasIndex("OrderId");
+
+                    b.HasIndex("TransactionId")
+                        .IsUnique();
 
                     b.ToTable("Payments", (string)null);
 
@@ -202,8 +211,7 @@ namespace Online_Shopping_System.Migrations
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.HasIndex("ShippingTypeId")
-                        .IsUnique();
+                    b.HasIndex("ShippingTypeId");
 
                     b.ToTable("ShippingRecords", (string)null);
                 });
@@ -241,7 +249,7 @@ namespace Online_Shopping_System.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<byte[]>("PasswordHashed")
                         .IsRequired()
@@ -263,6 +271,9 @@ namespace Online_Shopping_System.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.HasIndex("UserTypeId");
 
@@ -430,9 +441,9 @@ namespace Online_Shopping_System.Migrations
                         .IsRequired();
 
                     b.HasOne("Online_Shopping_System.Models.Shipping.ShippingType", "ShippingType")
-                        .WithOne("ShippingRecords")
-                        .HasForeignKey("Online_Shopping_System.Models.Shipping.ShippingRecords", "ShippingTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithMany("ShippingRecords")
+                        .HasForeignKey("ShippingTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Order");
@@ -521,8 +532,7 @@ namespace Online_Shopping_System.Migrations
 
             modelBuilder.Entity("Online_Shopping_System.Models.Shipping.ShippingType", b =>
                 {
-                    b.Navigation("ShippingRecords")
-                        .IsRequired();
+                    b.Navigation("ShippingRecords");
                 });
 
             modelBuilder.Entity("Online_Shopping_System.Models.Users.User", b =>

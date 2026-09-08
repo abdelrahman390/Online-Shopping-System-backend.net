@@ -1,20 +1,22 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+using Moq;
+using Online_Shopping_System.Data;
 using Online_Shopping_System.Models.Carts;
 using Online_Shopping_System.Models.Orders;
 using Online_Shopping_System.Models.Payment;
 using Online_Shopping_System.Models.Users;
-using Online_Shopping_System.Data;
-using System.ComponentModel.Design;
-using System.Data;
-using System.Linq;
-using System.Net;
 using System.Security.Claims;
+//using System.ComponentModel.Design;
+//using System.Data;
+//using System.Linq;
+//using System.Net;
+//using Microsoft.Data.SqlClient;
+//using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore.Infrastructure;
+//using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 //using Online_Shopping_System.Services;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 
 namespace Online_Shopping_System.Controllers
@@ -33,26 +35,31 @@ namespace Online_Shopping_System.Controllers
             _emailService = emailService;
         }
 
-
+        [Authorize]
         [HttpPost("cashPay")]
-        public async Task<IActionResult> CashPay(int userId)
+        public async Task<IActionResult> CashPay()
         {
+            /*
+             info: Online-Shopping-System[0]
+             POST /Order/confirmOrder responded 200 in 171 ms
+             */
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
-                //var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
                 //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
                 //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-                //if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
-                //{
-                //    return Unauthorized("Missing data in the token.");
-                //}
+                if (userIdClaim == null)
+                {
+                    return Unauthorized("Missing data in the token.");
+                }
 
-                Order order = _dbContext.Orders.FirstOrDefault(o => o.UserId == userId && o.OrderStatus == "Pending");
+                Order order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.UserId == int.Parse(userIdClaim.Value) && o.OrderStatus == "Pending");
 
                 if (order == null)
                 {
-                    return BadRequest($"Order not found. {userId}");
+                    return BadRequest($"Order not found. {int.Parse(userIdClaim.Value)}");
                 }
 
                 Payment cashpayment = new CashPayment
@@ -68,7 +75,7 @@ namespace Online_Shopping_System.Controllers
                     return BadRequest("Cash Payment data is incorrect.");
                 }
 
-                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.CartId == order.CartId && c.CartStatus == "Pending");
+                Cart cart = await _dbContext.Carts.FirstOrDefaultAsync(c => c.CartId == order.CartId && c.CartStatus == "Pending");
 
                 if(cart == null)
                 {
@@ -81,23 +88,26 @@ namespace Online_Shopping_System.Controllers
 
                 _dbContext.Payments.Add(cashpayment);
 
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
 
-                User user = _dbContext.Users.FirstOrDefault(u => u.UserId == userId);
+                //User user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserId == int.Parse(userIdClaim.Value));
 
-                await _emailService.SendEmailAsync(
-                        user.Email,
-                        "Order Confirmation.",
-                        "Hello from Online-Shopping-System, your order has benn confirmed."
-                    );
+                //await _emailService.SendEmailAsync(
+                //        "abdelrahmanbo390@gmail.com",
+                //        "Order Confirmation.",
+                //        "Hello from Online-Shopping-System, your order has benn confirmed."
+                //    );
 
+                await transaction.CommitAsync();
                 return Ok(
                     $"OrderId: {order.OrderId} is now Paid and confirmed."
                 );
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                await transaction.RollbackAsync();
+
+                //Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,
                     $"Error: {ex.Message}"
@@ -105,22 +115,23 @@ namespace Online_Shopping_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("creditCardPay")]
-        public async Task<IActionResult> CreditCardPay(int userId, string cardNumber)
+        public async Task<IActionResult> CreditCardPay(string cardNumber)
         {
-
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
-                //var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
                 //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
                 //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-                //if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
-                //{
-                //    return Unauthorized("Missing data in the token.");
-                //}
+                if (userIdClaim == null)
+                {
+                    return Unauthorized("Missing data in the token.");
+                }
 
-                Order order = _dbContext.Orders.FirstOrDefault(o => o.UserId == userId && o.OrderStatus == "Pending");
+                Order order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.UserId == int.Parse(userIdClaim.Value) && o.OrderStatus == "Pending");
 
                 if (order == null)
                 {
@@ -142,7 +153,7 @@ namespace Online_Shopping_System.Controllers
                 creditCardPayment.Amount = order.TotalCost;
                 creditCardPayment.Date = DateTimeOffset.Now;
 
-                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.CartId == order.CartId && c.CartStatus == "Pending");
+                Cart cart = await _dbContext.Carts.FirstOrDefaultAsync(c => c.CartId == order.CartId && c.CartStatus == "Pending");
 
                 order.OrderStatus = "Confirmed";
                 order.PaymentTypeName = "CreditCard";
@@ -150,15 +161,23 @@ namespace Online_Shopping_System.Controllers
 
                 _dbContext.Payments.Add(creditCardPayment);
 
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
 
-                User user = _dbContext.Users.FirstOrDefault(u => u.UserId == userId);
+                User user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserId == int.Parse(userIdClaim.Value));
 
-                await _emailService.SendEmailAsync(
-                    user.Email,
-                    "Order Confirmation.",
-                    "Hello from Online-Shopping-System, your order has benn confirmed."
-                );
+                //Console.WriteLine($"Test: {cardNumber}");
+
+                //Console.WriteLine("Before sending email");
+
+                //await _emailService.SendEmailAsync(
+                //    "abdelrahmanbo390@gmail.com",
+                //    "Order Confirmation.",
+                //    "Hello from Online-Shopping-System, your order has benn confirmed."
+                //);
+
+                //Console.WriteLine("After sending email");
+
+                await transaction.CommitAsync();
 
                 return Ok(
                     $"OrderId: {order.OrderId} is now Paid and confirmed."
@@ -166,7 +185,9 @@ namespace Online_Shopping_System.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                await transaction.RollbackAsync();
+
+                //Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,
                     $"Error: {ex.Message}"
@@ -174,22 +195,23 @@ namespace Online_Shopping_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("WalletPay")]
-        public async Task<IActionResult> WalletPay(int userId, string WalletNumber, string WalletProviderName)
+        public async Task<IActionResult> WalletPay(string WalletNumber, string WalletProviderName)
         {
-
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
-                //var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
                 //var userRoleClaim = User.FindFirst(ClaimTypes.Role);
                 //var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
 
-                //if (userIdClaim == null || userRoleClaim == null || userIpAdress == null)
-                //{
-                //    return Unauthorized("Missing data in the token.");
-                //}
+                if (userIdClaim == null)
+                {
+                    return Unauthorized("Missing data in the token.");
+                }
 
-                Order order = _dbContext.Orders.FirstOrDefault(o => o.UserId == userId && o.OrderStatus == "Pending");
+                Order order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.UserId == int.Parse(userIdClaim.Value) && o.OrderStatus == "Pending");
 
                 if (order == null)
                 {
@@ -217,21 +239,23 @@ namespace Online_Shopping_System.Controllers
 
                 _dbContext.Payments.Add(walletPayment);
 
-                Cart cart = _dbContext.Carts.FirstOrDefault(c => c.CartId == order.CartId && c.CartStatus == "Pending");
+                Cart cart = await _dbContext.Carts.FirstOrDefaultAsync(c => c.CartId == order.CartId && c.CartStatus == "Pending");
 
                 order.OrderStatus = "Confirmed";
                 order.PaymentTypeName = "Wallet";
                 cart.CartStatus = "Confirmed";
 
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
 
-                User user = _dbContext.Users.FirstOrDefault(u => u.UserId == userId);
+                User user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserId == int.Parse(userIdClaim.Value));
 
-                await _emailService.SendEmailAsync(
-                    user.Email,
-                    "Order Confirmation.",
-                    "Hello from Online-Shopping-System, your order has benn confirmed."
-                );
+                //await _emailService.SendEmailAsync(
+                //    "abdelrahmanbo390@gmail.com",
+                //    "Order Confirmation.",
+                //    "Hello from Online-Shopping-System, your order has benn confirmed."
+                //);
+
+                await transaction.CommitAsync();
 
                 return Ok(
                     $"OrderId: {order.OrderId} is now Paid and confirmed."
@@ -239,7 +263,9 @@ namespace Online_Shopping_System.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+
+                await transaction.RollbackAsync();
+                //Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,
                     $"Error: {ex.Message}"

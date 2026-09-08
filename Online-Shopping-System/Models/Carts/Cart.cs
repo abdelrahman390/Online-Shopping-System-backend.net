@@ -21,5 +21,6 @@ namespace Online_Shopping_System.Models.Carts
         public Order Order { get; set; }
 
         public ICollection<CartItem> CartItems { get; set; }
+
     }
 }

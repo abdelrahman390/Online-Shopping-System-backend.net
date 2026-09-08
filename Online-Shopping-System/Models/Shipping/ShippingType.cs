@@ -8,7 +8,8 @@
         public decimal ShippingCost { get; set; }
         public int ShippingDuration { get; set; } // in days
 
-        public ShippingRecords ShippingRecords { get; set; }
+        public ICollection<ShippingRecords> ShippingRecords { get; set; }
+    = new List<ShippingRecords>();
 
     }
 }

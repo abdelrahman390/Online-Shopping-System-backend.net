@@ -1,12 +1,15 @@
 ﻿using Konscious.Security.Cryptography;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Online_Shopping_System.Data;
 using Online_Shopping_System.Models.Users;
 using Online_Shopping_System.Services;
-using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System.Security.Claims;
+using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.RateLimiting;
+//using System.Data;
+//using System.Security.Claims;
 
 namespace market_watch.Controllers
 {
@@ -39,9 +42,15 @@ namespace market_watch.Controllers
             var argon2 = new Argon2id(passwordBytes)
             {
                 Salt = salt,
-                DegreeOfParallelism = 4,
-                Iterations = 3,
-                MemorySize = 65536
+                // ############## for Production ##############
+                //DegreeOfParallelism = 4,
+                //Iterations = 3,
+                //MemorySize = 65536
+
+                // ############## for Testing ##############
+                DegreeOfParallelism = 1,
+                Iterations = 1,
+                MemorySize = 8192
             };
 
             return await argon2.GetBytesAsync(32);
@@ -55,9 +64,15 @@ namespace market_watch.Controllers
             var argon2 = new Argon2id(passwordBytes)
             {
                 Salt = salt,
-                DegreeOfParallelism = 4,
-                Iterations = 3,
-                MemorySize = 65536 // 64 MB
+                // ############## for Production ##############
+                //DegreeOfParallelism = 4,
+                //Iterations = 3,
+                //MemorySize = 65536
+
+                // ############## for Testing ##############
+                DegreeOfParallelism = 1,
+                Iterations = 1,
+                MemorySize = 8192
             };
 
             byte[] hash = await argon2.GetBytesAsync(32);
@@ -65,7 +80,7 @@ namespace market_watch.Controllers
             return new PasswordHashResult(Hash: hash, Salt: salt );
         }
 
-        [HttpGet("register")]
+        [HttpPost("register")]
         public async Task<IActionResult> register(string UserName, string email, string Password, string userRole)
         {
 
@@ -80,18 +95,33 @@ namespace market_watch.Controllers
                 //bool isValidPassword = Password.Length >= 8;
                 bool isValidPassword = true;
 
-                Console.WriteLine($" {isValidRole} - {isUniqueUsername} - {CorrectEmailFormat} - {isValidPassword}");
+                //Console.WriteLine($" {isValidRole} - {isUniqueUsername} - {CorrectEmailFormat} - {isValidPassword}");
 
-                if (!isValidRole && isUniqueUsername && CorrectEmailFormat && isValidPassword)
+                if (!isValidRole ||
+                    !isUniqueUsername ||
+                    !CorrectEmailFormat ||
+                    !isValidPassword)
                 {
-                    return BadRequest($"The entered data is incorrect. {isValidRole} - {isUniqueUsername} - {CorrectEmailFormat} - {isValidPassword}");
+                    return BadRequest(
+                        $"The entered data is incorrect. " +
+                        $"{isValidRole} - {isUniqueUsername} - " +
+                        $"{CorrectEmailFormat} - {isValidPassword}"
+                    );
+                }
+
+                var userType = await _dbContext.UserTypes
+                    .FirstOrDefaultAsync(ut => ut.UserTypeName == userRole);
+
+                if (userType == null)
+                {
+                    return BadRequest($"User role '{userRole}' does not have a corresponding UserType.");
                 }
 
                 PasswordHashResult passwordHashResult = await HashPassword(Password);
 
                 User newUser = new User
                 {
-                    UserTypeId = 1,
+                    UserTypeId = userType.UserTypeId,
                     UserName = UserName,
                     Email = email,
                     PasswordHashed = passwordHashResult.Hash,
@@ -100,7 +130,7 @@ namespace market_watch.Controllers
                 };
 
                 _dbContext.Users.Add(newUser);
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
 
                 //_AuditLogsService.Log(newUser.UserId, "register", "Users", DateTime.Now, userIpAdress);
 
@@ -109,7 +139,7 @@ namespace market_watch.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                //Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,
                     $"Error: {ex.Message}"
@@ -118,16 +148,22 @@ namespace market_watch.Controllers
         }
 
 
-        [HttpGet("login")]
+        //[EnableRateLimiting("login")]
+        [HttpPost("login")]
         public async Task<IActionResult> login(string UserName, string Password)
         {
 
             try
             {
-                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
-                User? user = _dbContext.Users.FirstOrDefault(u => u.UserName == UserName);
+                //var sw = Stopwatch.StartNew();
 
-                Console.WriteLine($"Error Top: {user}");
+                var userIpAdress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                User? user = await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.UserName == UserName);
+
+                //Console.WriteLine($"DB query: {sw.ElapsedMilliseconds} ms");
+                //sw.Restart();
+
+                //Console.WriteLine($"Error Top: {user}");
                 if (user == null)
                 {
                     return Unauthorized("Invalid username or password.");
@@ -135,26 +171,40 @@ namespace market_watch.Controllers
 
                 byte[] passwordHashResult = await HashPasswordWithSalt(Password, user.PasswordSalt);
 
-                if (!CryptographicOperations.FixedTimeEquals(user.PasswordHashed, passwordHashResult))
+                //Console.WriteLine($"Argon2: {sw.ElapsedMilliseconds} ms");
+                //sw.Restart();
+
+                bool passwordValid = CryptographicOperations.FixedTimeEquals(user.PasswordHashed, passwordHashResult);
+
+                //Console.WriteLine($"Hash comparison: {sw.ElapsedMilliseconds} ms");
+                //sw.Restart();
+
+                if (!passwordValid)
                 {
                     return Unauthorized("Invalid username or password.");
                 }
 
-                Console.WriteLine($"Error Top: {passwordHashResult}");
+                //Console.WriteLine($"Error Top: {passwordHashResult}");
 
                 var token = _jwtService.GenerateToken(
                         user
                     );
 
+                //Console.WriteLine($"JWT generation: {sw.ElapsedMilliseconds} ms");
 
                 //_AuditLogsService.Log(user.UserId, "login", "Users", DateTime.Now, userIpAdress);
 
-                return Ok($"Logged in successfuly. Token: {token}");
+                //return Ok($"Logged in successfuly. Token: {token}");
+                return Ok(new
+                {
+                    message = "Logged in successfully.",
+                    token = token
+                });
 
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                //Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(
                     500,
                     $"Error: {ex.Message}"

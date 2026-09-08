@@ -30,18 +30,49 @@ namespace Online_Shopping_System.Data
         // add products
         public void CreateTestProducts()
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 20; i++)
             {
-                Product newProduct = new Product
+                Product newElectronic = new Electronics
                 {
-                    Name = "Product" + i.ToString(),
-                    Price = i * 5 + 2,
-                    Quantity = i * 3,
-                    Type = "Books"
+                    Name = "Electronics-" + i,
+                    Price = 250,
+                    Quantity = 10000,
+                    Type = "Electronics",
+                    Warranty = 24
+                };
+                _dbContext.Products.Add(newElectronic);
+            }
+
+            for (int i = 0; i < 20; i++)
+            {
+                Product newBook = new Books
+                {
+                    Name = "Book-" + i,
+                    Price = 50,
+                    Quantity = 10000,
+                    Type = "Books",
+                    Author = "Author-" + i,
+                    ISBN = "ISBN-" + i
                 };
 
-                _dbContext.Products.Add(newProduct);
+                _dbContext.Products.Add(newBook);
             }
+
+            for (int i = 0; i < 20; i++)
+            {
+                Product newClothes = new Clothes
+                {
+                    Name = "Clothes-" + i,
+                    Price = 70,
+                    Quantity = 10000,
+                    Type = "Clothes",
+                    Size = i+1,
+                    Color = "Color-" + i
+                };
+
+                _dbContext.Products.Add(newClothes);
+            }
+
             _dbContext.SaveChanges();
             Console.WriteLine("Test Products created successfully.");
         }
@@ -53,9 +84,9 @@ namespace Online_Shopping_System.Data
                 User newUser = new User
                 {
                     UserName = "User" + i.ToString(),
-                    Email = "abdelrahmanbo390@gmail.com",
+                    Email = "User" + i.ToString() + "@gmail.com",
                     PasswordHashed = Array.Empty<byte>(),
-                    UserTypeId = 1,
+                    UserTypeId = _dbContext.UserTypes.First().UserTypeId,
                     PasswordSalt = Array.Empty<byte>(),
                     UserRole = "User"
                 };

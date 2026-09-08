@@ -1,10 +1,14 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Online_Shopping_System.Data;
 using Online_Shopping_System.Services;
+using QuestPDF.Infrastructure;
+using System.Diagnostics;
 using System.Text;
+using System.Threading.RateLimiting;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,6 +47,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.AddHttpClient<EmailService>();
 builder.Services.AddScoped<CreateTestData>();
+builder.Services.AddScoped<ReportService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactPolicy", policy =>
@@ -51,6 +56,27 @@ builder.Services.AddCors(options =>
             .WithOrigins("http://localhost:5173")
             .AllowAnyHeader()
             .AllowAnyMethod();
+    });
+});
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.AddFixedWindowLimiter("login", limiterOptions =>
+    {
+        limiterOptions.PermitLimit = 5;
+        limiterOptions.Window = TimeSpan.FromMinutes(1);
+        limiterOptions.QueueLimit = 0;
+        limiterOptions.AutoReplenishment = true;
+    });
+
+    options.AddFixedWindowLimiter("checkout", limiterOptions =>
+    {
+        limiterOptions.PermitLimit = 10;
+        limiterOptions.Window = TimeSpan.FromMinutes(1);
+        limiterOptions.QueueLimit = 0;
+        limiterOptions.AutoReplenishment = true;
     });
 });
 
@@ -81,13 +107,35 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddMemoryCache();
 
 builder.Services.AddDbContext<OnlineShoppingContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
     ));
 
+QuestPDF.Settings.License = LicenseType.Community;
+
 var app = builder.Build();
+
+
+app.Use(async (context, next) =>
+{
+    var sw = Stopwatch.StartNew();
+    try
+    {
+        await next();
+    }
+    finally
+    {
+        sw.Stop();
+        app.Logger.LogInformation("{Method} {Path} responded {StatusCode} in {Elapsed} ms",
+            context.Request.Method,
+            context.Request.Path,
+            context.Response.StatusCode,
+            sw.ElapsedMilliseconds);
+    }
+});
 
 app.UseCors("ReactPolicy");
 
@@ -115,8 +163,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseRateLimiter();
 
 app.MapControllers();
 
 app.Run();
+
+
+public partial class Program { }

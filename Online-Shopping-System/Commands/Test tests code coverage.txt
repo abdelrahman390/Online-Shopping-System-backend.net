@@ -1,0 +1,17 @@
+cd Online-Shopping-SystemTests
+dotnet test --collect:"XPlat Code Coverage" --settings coverage.runsettings
+
+
+
+
+
+
+// to generate the code coverage HTML report, run the following command in the terminal:
+
+
+cd "E:\Programming\InternSheps\FRA 2026\Projs\Online Shopping System\Backend\Online-Shopping-System-backend.net\Online-Shopping-SystemTests"
+
+reportgenerator `
+  -reports:"TestResults\*\coverage.cobertura.xml" `
+  -targetdir:"coverage-report" `
+  -reporttypes:Html

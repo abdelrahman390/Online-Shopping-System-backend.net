@@ -7,10 +7,11 @@
 
         public override bool CollectMoney()
         {
+            if (WalletNumber == null || WalletProviderName == null) return false;
             // Generate a unique transaction ID for the payment for testing.
             TransactionId = Guid.NewGuid().ToString();
 
-            bool ValidNum = WalletNumber.Length == 12;
+            bool ValidNum = WalletNumber.Length == 11;
             bool ValidWalletName = WalletProviderName.Length > 3;
             return ValidNum && ValidWalletName;
         }
